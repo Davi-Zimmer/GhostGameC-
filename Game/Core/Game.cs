@@ -1,15 +1,21 @@
 using Game;
 using Game.Objects.Basics;
+using Game.Objects.Entities;
 using Raylib_cs;
 
 namespace Game.Core;
 
 public class Main {
     
-    private Point2D p = new Point2D();
+    private List< GenericEntity > map = [];
 
     public Main() {
 
+        map.Add(
+            new Player().Configure<Player>( e => {
+                e.setW( 100 );
+            })
+        );
 
     }
 
@@ -17,19 +23,23 @@ public class Main {
 
         Raylib.ClearBackground( Color.Black );
         
-        if( Raylib.IsKeyDown( KeyboardKey.W ) ) p.y -= 1;
-        if( Raylib.IsKeyDown( KeyboardKey.A ) ) p.x -= 1;
-        if( Raylib.IsKeyDown( KeyboardKey.S ) ) p.y += 1;
-        if( Raylib.IsKeyDown( KeyboardKey.D ) ) p.x += 1;
+        foreach( var t in map ) {
+            
+            t.tick( delta );
+            t.render();
 
-        
-        Raylib.DrawCircle( p.intX, p.intY, 10, Color.Red );
+        }
+
+
+        // Raylib.DrawCircle( p.intX, p.intY, 10, Color.Red );
 
     }
 
-    public void test() {
-        
-    }
+    
+    //--------------------------------- Enums ---------------------------------\\ 
+
 
 }
-
+public enum GameObject {
+    GenericEntity
+}
