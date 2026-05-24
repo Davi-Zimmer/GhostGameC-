@@ -18,7 +18,7 @@ public class Program {
     }
 
 
-    public void update( double delta ) {
+    public void update( float delta ) {
         
         // Raylib.ClearBackground( Color.Black );
 

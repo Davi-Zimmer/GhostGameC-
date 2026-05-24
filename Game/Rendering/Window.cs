@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using System.Runtime.InteropServices.Swift;
 using Game;
 using Raylib_cs;
 
@@ -7,7 +6,7 @@ namespace Game.Rendering;
 
 public class Window {
     
-    public delegate void Loop( double delta );
+    public delegate void Loop( float delta );
 
     public Window( Loop loop ) {
 
@@ -42,7 +41,7 @@ public class Window {
 
             Raylib.BeginDrawing();
         
-            loop( deltaTime );
+            loop( (float)deltaTime );
 
             Raylib.EndDrawing();
 

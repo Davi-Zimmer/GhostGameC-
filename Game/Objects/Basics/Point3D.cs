@@ -3,7 +3,7 @@ namespace Game.Objects.Basics;
 
 public class Point3D : Point2D {
 
-    public double z { get; set; } = 0;
+    private float z = 0;
 
 
     public Point3D(): base() {
@@ -11,14 +11,14 @@ public class Point3D : Point2D {
     }
 
 
-    public int intZ => (int) z;
-
+    public int getIntZ() { return (int) z; }
+    public float getZ() { return z; } 
     
-    public Point2D apply( double x, double y, double z  ) { apply( x, y ); this.z += z; return this; }
-    public Point2D applyZ( double z ) { this.z += z; return this; }
+    public Point2D apply( float x, float y, float z  ) { apply( x, y ); this.z += z; return this; }
+    public Point2D applyZ( float z ) { this.z += z; return this; }
 
     //--------------------------------- Setters ---------------------------------\\ 
-    public Point3D setZ( double z ) { this.z = z; return this; } 
+    public Point3D setZ( float z ) { this.z = z; return this; } 
 
 
 } 

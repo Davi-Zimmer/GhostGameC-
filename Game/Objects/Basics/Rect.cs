@@ -11,7 +11,12 @@ public class Rect : Point3D {
         
     }
 
+    //--------------------------------- Getters ---------------------------------\\ 
+    public double getW() { return w; } 
+    public double getH() { return h; } 
 
+    public int getIntW() { return (int) w; } 
+    public int getIntH() { return (int) h; } 
 
     //--------------------------------- Setters ---------------------------------\\ 
 
