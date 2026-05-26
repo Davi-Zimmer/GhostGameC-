@@ -12,9 +12,16 @@ public class Main {
 
     private List< GenericEntity > map = [];
 
+    private Player player;
+
+    private Rect? cameraTarget = null;
+
     public Main() {
         
         var p = new Player();
+
+        player = p;
+        cameraTarget = p;
 
         map.Add( p );
 
@@ -62,33 +69,24 @@ public class Main {
 
         } else {
            
+            Collidable oColl = other.getCollidable();  
+            Physics op       = other.getPhysics();  
+            Physics ep       = e.getPhysics();  
+
+            if( oColl.getCanOverlapOthers() ) e.applyY( overlap.y ); else 
+
+            if( e.getCollidable().getCanPushOthers() ) {
+
+                op.pushY( Math.Sign( -overlap.y ), ep.getMass(), ep.getKnockback(), delta );
+
+            }
+
+            if( op.getFixed() ) return;
+
+            op.pushY( Math.Sign( -overlap.y ), ep.getMass(), ep.getKnockback(), delta );
 
         }
 
-   
-
-   /*
-            Collidable eColl = other.getCollidable();
-            Physics ePhysic  = other    .getPhysics();
-            Physics oPhysic  = e.getPhysics();
-
-            if( eColl.getCanOverlapOthers() ) e.applyX( overlap.x ); else {
-                
-                if( eColl.getCanPushOthers() ) {
-                    
-                    oPhysic.pushX( Math.Sign( -overlap.x ), ePhysic.getMass(), ePhysic.getKnockback() );
-
-                }
-            
-            }
-
-            oPhysic.getAcceleration().multiplyX( -.5f );
-
-            if( oPhysic.getFixed() ) return;
-
-            ePhysic.pushX( Math.Sign( -overlap.x ), ePhysic.getMass(), ePhysic.getKnockback() );
-
-            */
     }
 
     private void collision( GenericEntity e,  float delta ) {
@@ -116,10 +114,41 @@ public class Main {
 
     }
 
+    private float lerp( float start, float end, float t ) {
+        return start + (end - start) * t;
+    }
+
+
+    private double getTargetX( float x, Rect targ ) { 
+        return ( x + targ.getW() / 2 ) - Raylib.GetScreenWidth () / 2;
+    }
+
+    private double getTargetY( float y, Rect targ ) {
+        return ( y + targ.getH() / 2 ) - Raylib.GetScreenHeight() / 2;
+    }
+
+    private void cameraFollow( float delta ) {
+
+        Rect follow = cameraTarget!;
+
+        if( follow == null ) return;
+
+        float xx = cameraTarget!.extractX( delta );
+        float yy = cameraTarget!.extractY( delta );
+        
+        float x = (float)getTargetX( xx, cameraTarget );
+        float y = (float)getTargetY( yy, cameraTarget );
+
+        cam.Target.X = lerp( cam.Target.X, x, .3f );
+        cam.Target.Y = lerp( cam.Target.Y, y, .3f );
+
+    }
+
     public void update( float delta ) {
 
         Raylib.ClearBackground( Color.Black );
         
+
         // <Interface>
             
         // </Interface>
@@ -127,6 +156,8 @@ public class Main {
         // <Game>
             Raylib.BeginMode2D( cam );
 
+            cameraFollow( delta );
+            
             foreach( var t in map ) {
                 
                 t.tick( delta );
