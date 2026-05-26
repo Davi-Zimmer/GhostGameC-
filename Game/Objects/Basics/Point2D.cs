@@ -30,15 +30,14 @@ public class Point2D {
     public int getIntX() { return (int) x; } 
     public int getIntY() { return (int) y; }
 
-    public virtual float extractX() { return x; }
-    public virtual float extractY() { return y; }
+    public virtual float extractX(  float delta ) { return x; }
+    public virtual float extractY(  float delta ) { return y; }
 
     //--------------------------------- Setters ---------------------------------\\ 
 
     public Point2D setX( float x ) { this.x = x; return this; } 
     public Point2D setY( float y ) { this.y = y; return this; } 
 
-
-
+    public Point2D setXY( float x, float y ) { return setX( x ).setY( y ); } 
 
 } 

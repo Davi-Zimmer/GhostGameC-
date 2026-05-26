@@ -1,5 +1,6 @@
 using System.Numerics;
 using Game.Objects;
+using Game.Objects.Basics;
 using Game.World.Entity;
 using Raylib_cs;
 
@@ -13,33 +14,15 @@ public class Main {
 
     public Main() {
         
-        var p = new Player().Configure<Player>( p => {
-            p.addCollision()
-            .addPhysic()
-            .setSpeed( 200 )
-            .setX( Raylib.GetScreenWidth () )
-            .setY( Raylib.GetScreenHeight() );
-
-            p.getCollidable()!
-            .setCanOverlapOthers( true )
-            .setCanPushOthers( true );
-        });
+        var p = new Player();
 
         map.Add( p );
 
         configCamera( p );
 
-        map.Add( new GenericEntity().Configure<GenericEntity>( e => {
-            e.addCollision()
-            .addPhysic()
-            .setW( 100 )
-            .setH( 100 )
-            .setX( 300 )
-            .setY( 150 );
+        map.Add( new GenericEntity().Configure<GenericEntity>( e => e.setXY( 200, 200 ) ) );
 
-            p.getCollidable()!.setCanOverlapOthers( true )
-            .setCanPushOthers( true );
-        }));
+        map.Add( new GenericEntity().Configure<GenericEntity>( e => e.setXY( 200, 400 ) ) );
 
     }
 
@@ -54,73 +37,63 @@ public class Main {
 
     }
 
-    private void collisionPush( GenericEntity e, GenericEntity other, Collidable.Overlap overlap ) {
-        
+    private void collisionPush( GenericEntity e, GenericEntity other, Collidable.Overlap overlap, float delta ) {
+
         bool horizontal = Math.Abs( overlap.x ) < Math.Abs( overlap.y );
 
         if( horizontal ) {
 
-            Collidable coll = e.getCollidable()!;
+            Collidable oColl = other.getCollidable();  
+            Physics op       = other.getPhysics();  
+            Physics ep       = e.getPhysics();  
 
-            Physics? ePhysic = e.getPhysics();
+            if( oColl.getCanOverlapOthers() ) e.applyX( overlap.x ); else 
 
-            if ( coll.getCanOverlapOthers() ) other.applyX( -overlap.x  );
+            if( e.getCollidable().getCanPushOthers() ) {
 
-            else if( coll.getCanPushOthers() ){
-                
-                if ( ePhysic != null ) return; 
-
-                other.getPhysics()!.pushX( Math.Sign( overlap.x ), ePhysic!.getMass(), ePhysic!.getKnockback() );
+                op.pushX( Math.Sign( -overlap.x ), ep.getMass(), ep.getKnockback(), delta );
 
             }
 
-            Physics? oPhysic = other.getPhysics();
+            if( op.getFixed() ) return;
 
-            if( oPhysic == null ) return;
-
-            oPhysic!.getAcceleration().multiplyX( -.5f );
-
-            if( ePhysic!.getFixed() ) return;
-
-            ePhysic.pushX( Math.Sign( overlap.x ), oPhysic!.getMass(), oPhysic!.getKnockback() );
-
+            op.pushX( Math.Sign( -overlap.x ), ep.getMass(), ep.getKnockback(), delta );
+            
 
         } else {
-            
-            Collidable coll = e.getCollidable()!;
-
-            Physics? ePhysic = e.getPhysics();
-
-            if ( coll.getCanOverlapOthers() ) other.applyY( -overlap.y  );
-
-            else if( coll.getCanPushOthers() ){
-                
-                if ( ePhysic != null ) return; 
-
-                other.getPhysics()!.pushY( Math.Sign( overlap.y ), ePhysic!.getMass(), ePhysic!.getKnockback() );
-
-            }
-
-            Physics? oPhysic = other.getPhysics();
-
-            if( oPhysic == null ) return;
-
-            oPhysic!.getAcceleration().multiplyY( -.5f );
-
-            if( ePhysic!.getFixed() ) return;
-
-            ePhysic.pushY( Math.Sign( overlap.x ), oPhysic!.getMass(), oPhysic!.getKnockback() );
-
+           
 
         }
 
+   
 
+   /*
+            Collidable eColl = other.getCollidable();
+            Physics ePhysic  = other    .getPhysics();
+            Physics oPhysic  = e.getPhysics();
 
+            if( eColl.getCanOverlapOthers() ) e.applyX( overlap.x ); else {
+                
+                if( eColl.getCanPushOthers() ) {
+                    
+                    oPhysic.pushX( Math.Sign( -overlap.x ), ePhysic.getMass(), ePhysic.getKnockback() );
+
+                }
+            
+            }
+
+            oPhysic.getAcceleration().multiplyX( -.5f );
+
+            if( oPhysic.getFixed() ) return;
+
+            ePhysic.pushX( Math.Sign( -overlap.x ), ePhysic.getMass(), ePhysic.getKnockback() );
+
+            */
     }
 
-    private void collision( GenericEntity e ) {
+    private void collision( GenericEntity e,  float delta ) {
         
-        if( e.getCollidable() == null ) return;
+        // if( e.getCollidable() == null ) return;
 
         foreach( var other in map) {
 
@@ -128,15 +101,15 @@ public class Main {
 
             if( e == other ) continue;
 
-            if ( !Collidable.IsColliding( e, other ) ) continue;
-
+            if ( !Collidable.IsColliding( e, other, delta ) ) continue;
+        
             var overlap = Collidable.GetOverlap( e, other );
         
             if( overlap == null ) continue;
 
             // collision trigger
 
-            collisionPush( e, other, overlap.Value );
+            collisionPush( e, other, overlap.Value, delta );
 
         }
 
@@ -158,9 +131,9 @@ public class Main {
                 
                 t.tick( delta );
                 
-                collision( t );
+                collision( t, delta );
                 
-                t.render( cam );
+                t.render( cam, delta );
 
             }
 
