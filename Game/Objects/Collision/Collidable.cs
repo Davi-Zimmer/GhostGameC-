@@ -29,27 +29,27 @@ public class Collidable {
 
 
     //--------------------------------- Methods ---------------------------------\\ 
-    public static bool IsColliding( Rect a, Rect b ){
+    public static bool IsColliding( Rect a, Rect b,  float delta ){
 
         return (
-            a.extractX() + a.getW() > b.extractX() &&
-            a.extractY() + a.getH() > b.extractY() &&
-            b.extractX() + b.getW() > a.extractX() &&
-            b.extractY() + b.getH() > a.extractY()
+            a.extractX(delta) + a.getW() > b.extractX(delta) &&
+            a.extractY(delta) + a.getH() > b.extractY(delta) &&
+            b.extractX(delta) + b.getW() > a.extractX(delta) &&
+            b.extractY(delta) + b.getH() > a.extractY(delta)
         );
 
     }
 
     public static Overlap? GetOverlap( Rect a, Rect b ){
 
-        float dx = (float)(( a.extractX() + a.getW() / 2 ) - ( b.extractX() + b.getW() / 2 ));
-        float dy = (float)(( a.extractY() + a.getH() / 2 ) - ( b.extractY() + b.getH() / 2 ));
+        float dx = (float)( ( a.getX() + a.getW() / 2f ) - ( b.getX() + b.getW() / 2f ) );
+        float dy = (float)( ( a.getY() + a.getH() / 2f ) - ( b.getY() + b.getH() / 2f ) );
 
-        float px = (float)(( a.getW() / 2  + b.getW() / 2 ) - Math.Abs( dx ));
-        float py = (float)(( a.getH() / 2  + b.getH() / 2 ) - Math.Abs( dy ));
+        float px = (float)( ( a.getW() / 2f  + b.getW() / 2f ) - Math.Abs( dx ) );
+        float py = (float)( ( a.getH() / 2f  + b.getH() / 2f ) - Math.Abs( dy ) );
 
         if( px <= 0 || py <= 0 ) return null;
-
+    
         Overlap t = new Overlap( 
             dx > 0 ? px : -px,
             dy > 0 ? py : -py
@@ -60,10 +60,9 @@ public class Collidable {
     }
 
 
-
     public struct Overlap {
-        public float x;
-        public float y;
+        public float x = 0;
+        public float y = 0;
 
         public Overlap( float x, float y ) {
             this.x = x;

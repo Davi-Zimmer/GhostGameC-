@@ -4,9 +4,9 @@ namespace Game.Objects;
 
 public class Physics {
     private float mass = 1;
-    private float friction = 1;
+    private float friction = .9f;
 
-    private float knockback = 1;
+    private float knockback = 100;
 
     private bool isFixed = false; 
         
@@ -21,13 +21,27 @@ public class Physics {
 
     }
 
+    private float calcDirectionForce ( int direction, float otherMass, float knockback, float delta ) {
 
-    public void pushX( int direction, float otherMass, float knockback ) {
-        
+        float ratio = otherMass / getMass();
+
+        if( ratio < 0.15f ) return 0;
+
+        float force = knockback * MathF.Pow( ratio, 2f );
+
+        return force * direction * delta;
     }
 
-    public void pushY( int direction, float otherMass, float knockback ) {
-        
+    public void pushX( int direction, float otherMass, float knockback, float delta ) {
+
+        acceleration.applyX( calcDirectionForce( direction, otherMass, knockback, delta ) * 10 );
+
+    }
+
+    public void pushY( int direction, float otherMass, float knockback, float delta ) {
+
+        acceleration.applyY( calcDirectionForce( direction, otherMass, knockback, delta ) * 10);
+
     }
 
 
