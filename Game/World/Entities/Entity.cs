@@ -7,7 +7,7 @@ namespace Game.World.Entity;
 public class GenericEntity: Rect {
     
     public delegate void Configuration( GenericEntity e );
-
+    
     GameObject gameObjectID = GameObject.GenericEntity;
 
     private Physics physics;
@@ -45,7 +45,7 @@ public class GenericEntity: Rect {
     }
 
 
-    public virtual void render( Camera2D cam, float delta ) {
+    public virtual void render( Camera2D cam, float delta, Texture2D spriteSheet ) {
         
         Raylib.DrawRectangle( (int)extractX(delta), (int)extractY(delta), getIntW(), getIntH(), Color.Blue );
         Raylib.DrawRectangle( getIntX(), getIntY(), getIntW(), getIntH(), Color.Red );

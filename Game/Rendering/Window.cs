@@ -7,12 +7,15 @@ namespace Game.Rendering;
 public class Window {
     
     public delegate void Loop( float delta );
+    public delegate void Func();
 
-    public Window( Loop loop ) {
+    public Window( Loop loop, Func end, Func config ) {
 
         configuration();
 
-        startLoop( loop );
+        config();
+        
+        startLoop( loop, end );
 
     }
 
@@ -23,7 +26,7 @@ public class Window {
 
     }
 
-    private void startLoop( Loop loop) {
+    private void startLoop( Loop loop, Func end ) {
 
         Stopwatch timer = new();
 
@@ -46,6 +49,8 @@ public class Window {
             Raylib.EndDrawing();
 
         }
+
+        end();
 
         Raylib.CloseWindow();
 

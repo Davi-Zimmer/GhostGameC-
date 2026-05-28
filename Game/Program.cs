@@ -10,13 +10,17 @@ public class Program {
     Main game;
 
     public Program() {
-
+        
         game = new Main();
 
-        window = new Window( update );
+        window = new Window( update, end, loadTextures );
 
     }
 
+    public void loadTextures() {
+        game.setup();
+        
+    }
 
     public void update( float delta ) {
         
@@ -27,6 +31,10 @@ public class Program {
 
         game.update( delta );
 
+    }
+
+    public void end() {
+        game.finish();
     }
       
 
