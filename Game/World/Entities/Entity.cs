@@ -7,7 +7,7 @@ namespace Game.World.Entity;
 public class GenericEntity: Rect {
     
     public delegate void Configuration( GenericEntity e );
-    
+
     GameObject gameObjectID = GameObject.GenericEntity;
 
     private Physics physics;

@@ -21,6 +21,9 @@ public class Rect : Point3D {
     public int getIntW() { return (int) w; } 
     public int getIntH() { return (int) h; } 
 
+    public float getMiddleX() { return getX() + getW() / 2; }
+    public float getMiddleY() { return getY() + getH() / 2; }
+
     //--------------------------------- Setters ---------------------------------\\ 
 
     public Rect setW( float w ) { this.w = w; return this; }

@@ -2,6 +2,7 @@ using System.Numerics;
 using Game.Objects;
 using Game.Objects.Basics;
 using Game.World.Entity;
+using Game.World.Entity.Enemy;
 using Raylib_cs;
 
 namespace Game.Core;
@@ -32,6 +33,8 @@ public class Main {
         map.Add( new GenericEntity().Configure<GenericEntity>( e => e.setXY( 200, 200 ) ) );
 
         map.Add( new GenericEntity().Configure<GenericEntity>( e => e.setXY( 200, 400 ) ) );
+
+        map.Add( new Slime( this ) );
         
     }
 
@@ -198,8 +201,11 @@ public class Main {
 
     }    
 
+    public Player getPlayer(){ return player; }
+
 }
 public enum GameObject {
     GenericEntity,
     Player,
+    Slime
 }

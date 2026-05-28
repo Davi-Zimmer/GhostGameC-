@@ -34,12 +34,14 @@ public class Player : GenericEntity {
     }
 
     private void fillSprites() {
+
         animation.createAnimation( [ "up", "down", "left", "right" ] );
 
         animation.forSprites( 0,   0, 27, 36, 4, 5, "down"  );
         animation.forSprites( 0,  37, 27, 36, 4, 5, "left"  );
         animation.forSprites( 0,  75, 27, 36, 4, 5, "right" );
         animation.forSprites( 0, 115, 27, 36, 4, 5, "up"    );
+        
     }
 
     private void executeKeys( float delta ) {
