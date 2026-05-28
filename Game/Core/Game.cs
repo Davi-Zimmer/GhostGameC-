@@ -16,6 +16,8 @@ public class Main {
 
     private Rect? cameraTarget = null;
 
+    public Texture2D spritesheet = new();
+
     public Main() {
         
         var p = new Player();
@@ -30,6 +32,20 @@ public class Main {
         map.Add( new GenericEntity().Configure<GenericEntity>( e => e.setXY( 200, 200 ) ) );
 
         map.Add( new GenericEntity().Configure<GenericEntity>( e => e.setXY( 200, 400 ) ) );
+        
+    }
+
+    public void setup() {
+
+        string path = Directory.GetCurrentDirectory() + "/Assets/placeholder.png";
+
+        spritesheet = Raylib.LoadTexture( path );
+
+    }
+
+    public void finish() {
+
+        Raylib.UnloadTexture( spritesheet );
 
     }
 
@@ -147,7 +163,6 @@ public class Main {
     public void update( float delta ) {
 
         Raylib.ClearBackground( Color.Black );
-        
 
         // <Interface>
             
@@ -164,7 +179,7 @@ public class Main {
                 
                 collision( t, delta );
                 
-                t.render( cam, delta );
+                t.render( cam, delta, spritesheet );
 
             }
 
@@ -172,6 +187,7 @@ public class Main {
 
         // </Game>
 
+        
     }
 
     public void addToMap( GenericEntity entity ) {

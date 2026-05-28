@@ -1,19 +1,22 @@
 
 
+using System.Drawing;
+
 namespace Game.Objects.Basics;
 
 public class Rect : Point3D {
     
     private float w { get; set; } = 0;
     private float h { get; set; } = 0;
-    
+
     public Rect(): base() {
-        
+
     }
 
+
     //--------------------------------- Getters ---------------------------------\\ 
-    public double getW() { return w; } 
-    public double getH() { return h; } 
+    public float getW() { return w; } 
+    public float getH() { return h; } 
 
     public int getIntW() { return (int) w; } 
     public int getIntH() { return (int) h; } 
