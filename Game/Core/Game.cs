@@ -39,7 +39,8 @@ public class Main {
         // map.Add( new GenericEntity( this ).Configure<GenericEntity>( e => e.setXY( 200, 200 ) ) );
         // map.Add( new GenericEntity( this ).Configure<GenericEntity>( e => e.setXY( 200, 400 ) ) );
 
-        addToMap( new GenericTile( this ).Configure<GenericTile>( t => t.setXY( 500f, 200f ) ) );
+        addToMap( new StoneWall( this ).Configure<StoneWall>( t => t.setXY( 500f, 200f ) ) );
+        addToMap( new CrackedStoneWall( this ).Configure<CrackedStoneWall>( t => t.setXY( 600f, 200f ) ) );
 
         addToMap( new Slime( this ) );
 
@@ -50,7 +51,7 @@ public class Main {
 
             for ( int y = 0; y < A; y++ ) {
                 
-                addToMap( new Grass( this ).Configure<GenericTile>( t => t.setZ(-1).setXY( x * size, y * size ) ) );
+                addToMap( new Grass( this ).Configure<GenericTile>( t => t.setXY( x * size, y * size ) ) );
 
             }
 
@@ -153,6 +154,9 @@ public class Main {
 
             if( !other.getCollidable().getSolid() ) continue;
 
+            if( other.getCollidable().getExceptions().Contains( e.getGameObjectID() ) ) continue;
+            if( e.getCollidable().getExceptions().Contains( other.getGameObjectID() ) ) continue;
+
             if( e == other ) continue;
 
             if ( !Collidable.IsColliding( e, other, delta ) ) continue;
@@ -223,7 +227,7 @@ public class Main {
             
             foreach( var t in map ) {
                 
-                if( !outsideCamera( t, 100 ) ) continue;
+                if( !outsideCamera( t, TileSize * 2 ) ) continue;
 
                 t.tick( delta );
                 
@@ -257,6 +261,8 @@ public enum GameObject {
     GenericTile,
     Player,
     Slime,
-    Grass
+    Grass,
+    StoneWall,
+    CrackedStoneWall
 
 }
