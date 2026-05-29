@@ -17,6 +17,7 @@ public class Player : GenericEntity {
             p.setSpeed( 200 )
             .setW( 27 )
             .setH( 36 )
+            .setZ( 10 )
             .setXY( 0, 0 );
 
             p.getCollidable()

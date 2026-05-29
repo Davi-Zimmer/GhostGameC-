@@ -19,7 +19,8 @@ public class GenericEntity: WorldObject {
         Configure<GenericEntity>( e => {
             e
             .setW( 100 )
-            .setH( 100 );
+            .setH( 100 )
+            .setZ( 5 );
 
             e.getCollidable()
             .setCanOverlapOthers( true )
