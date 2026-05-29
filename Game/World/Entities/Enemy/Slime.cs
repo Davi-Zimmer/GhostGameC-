@@ -11,9 +11,8 @@ public class Slime: GenericEntity {
     private int coutToJump = 0; 
     private Random rand = new();
     private int minJumpCooldown = 50;
-    private Main game;
 
-    public Slime( Main game ) {
+    public Slime( Main game ): base( game ) {
             
         this.game = game;
 

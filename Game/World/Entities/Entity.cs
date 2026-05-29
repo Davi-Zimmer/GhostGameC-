@@ -4,18 +4,14 @@ using Game.Objects.Basics;
 using Raylib_cs;
 namespace Game.World.Entity;
 
-public class GenericEntity: Rect {
+public class GenericEntity: WorldObject {
     
-    public delegate void Configuration( GenericEntity e );
-
-    GameObject gameObjectID = GameObject.GenericEntity;
-
     private Physics physics;
     private Collidable collidable;
 
     private float speed = 1;
 
-    public GenericEntity() {
+    public GenericEntity( Main game ): base( game ) {
 
         physics    = new Physics( this );
         collidable = new Collidable();
@@ -34,7 +30,7 @@ public class GenericEntity: Rect {
     }
 
     
-    public virtual void tick( float delta ) {
+    public override void tick( float delta ) {
         
         updatePosition( delta );
         // Console.WriteLine( getPhysics().getOrientation().getX() );
@@ -44,8 +40,7 @@ public class GenericEntity: Rect {
 
     }
 
-
-    public virtual void render( Camera2D cam, float delta, Texture2D spriteSheet ) {
+    public override void render( Camera2D cam, float delta, Texture2D spriteSheet ) {
         
         Raylib.DrawRectangle( (int)extractX(delta), (int)extractY(delta), getIntW(), getIntH(), Color.Blue );
         Raylib.DrawRectangle( getIntX(), getIntY(), getIntW(), getIntH(), Color.Red );
@@ -55,24 +50,14 @@ public class GenericEntity: Rect {
 
     //--------------------------------- Getters ---------------------------------\\ 
     public float getSpeed() { return speed; }
-
-    public Physics getPhysics() { return physics; }
-    public Collidable getCollidable() { return collidable; }
-    
-    public GameObject getGameObjectID() { return gameObjectID; }
+    public override Physics getPhysics() { return physics!; }
 
 
     //--------------------------------- Setters ---------------------------------\\ 
-    public GenericEntity setGameObjectID( GameObject id ) { gameObjectID = id; return this;  }
 
     public GenericEntity setSpeed( float s ) { speed = s; return this; }
 
-    public GenericEntity setPhysic( Physics p ) { physics = p; return this; }
-    public GenericEntity setCollidable( Collidable p ) { collidable = p; return this; }
 
-    public GenericEntity addPhysic() { physics = new Physics( this ); return this; }
-
-    public GenericEntity addCollision() { collidable = new Collidable(); return this; }
 
     public override float extractX( float delta ) { 
         return getX() + (physics.getAcceleration().getX() + physics.getOrientation().getX()) * delta;

@@ -9,12 +9,12 @@ namespace Game.World.Entity;
 public class Player : GenericEntity {
     Animation animation = new();
 
-    public Player() {
+    public Player( Main game ): base( game ) {
                 
         Configure<Player>( p => {
 
-            p.setGameObjectID( GameObject.Player )
-            .setSpeed( 200 )
+            p.setGameObjectID( GameObject.Player );
+            p.setSpeed( 200 )
             .setW( 27 )
             .setH( 36 )
             .setXY( 0, 0 );

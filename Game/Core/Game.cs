@@ -11,7 +11,7 @@ public class Main {
 
     Camera2D cam = new();
 
-    private List< GenericEntity > map = [];
+    private List< WorldObject > map = [];
 
     private Player player;
 
@@ -21,7 +21,7 @@ public class Main {
 
     public Main() {
         
-        var p = new Player();
+        var p = new Player( this );
 
         player = p;
         cameraTarget = p;
@@ -30,9 +30,8 @@ public class Main {
 
         configCamera( p );
 
-        map.Add( new GenericEntity().Configure<GenericEntity>( e => e.setXY( 200, 200 ) ) );
-
-        map.Add( new GenericEntity().Configure<GenericEntity>( e => e.setXY( 200, 400 ) ) );
+        // map.Add( new GenericEntity( this ).Configure<GenericEntity>( e => e.setXY( 200, 200 ) ) );
+        // map.Add( new GenericEntity( this ).Configure<GenericEntity>( e => e.setXY( 200, 400 ) ) );
 
         map.Add( new Slime( this ) );
         
@@ -63,21 +62,24 @@ public class Main {
 
     }
 
-    private void collisionPush( GenericEntity e, GenericEntity other, Collidable.Overlap overlap, float delta ) {
+    private void collisionPush( WorldObject e, WorldObject other, Collidable.Overlap overlap, float delta ) {
 
         bool horizontal = Math.Abs( overlap.x ) < Math.Abs( overlap.y );
 
         if( horizontal ) {
 
-            Collidable oColl = other.getCollidable();  
-            Physics op       = other.getPhysics();  
-            Physics ep       = e.getPhysics();  
+            Collidable oColl = other.getCollidable();
+            Physics op       = other.getPhysics()!;    if( op == null ) return;
+            Physics ep       = e.getPhysics()!;        if( ep == null ) return;
 
-            if( oColl.getCanOverlapOthers() ) e.applyX( overlap.x ); else 
 
-            if( e.getCollidable().getCanPushOthers() ) {
+            if( oColl.getCanOverlapOthers() ) e.applyX( overlap.x ); else {
+                
+                if( e.getCollidable().getCanPushOthers() ) {
 
-                op.pushX( Math.Sign( -overlap.x ), ep.getMass(), ep.getKnockback(), delta );
+                    op.pushX( Math.Sign( -overlap.x ), ep.getMass(), ep.getKnockback(), delta );
+
+                }
 
             }
 
@@ -88,18 +90,19 @@ public class Main {
 
         } else {
            
-            Collidable oColl = other.getCollidable();  
-            Physics op       = other.getPhysics();  
-            Physics ep       = e.getPhysics();  
+            Collidable oColl = other.getCollidable()!; if( oColl == null ) return;
+            Physics op       = other.getPhysics()!;    if( op == null ) return;
+            Physics ep       = e.getPhysics()!;        if( ep == null ) return;
 
-            if( oColl.getCanOverlapOthers() ) e.applyY( overlap.y ); else 
+            if( oColl.getCanOverlapOthers() ) e.applyY( overlap.y ); else {
+                
+                if( e.getCollidable().getCanPushOthers() ) {
 
-            if( e.getCollidable().getCanPushOthers() ) {
+                    op.pushY( Math.Sign( -overlap.y ), ep.getMass(), ep.getKnockback(), delta );
 
-                op.pushY( Math.Sign( -overlap.y ), ep.getMass(), ep.getKnockback(), delta );
+                }
 
             }
-
             if( op.getFixed() ) return;
 
             op.pushY( Math.Sign( -overlap.y ), ep.getMass(), ep.getKnockback(), delta );
@@ -108,13 +111,14 @@ public class Main {
 
     }
 
-    private void collision( GenericEntity e,  float delta ) {
+    private void collision( WorldObject e,  float delta ) {
         
-        // if( e.getCollidable() == null ) return;
+        if( !e.getCollidable()!.getSolid() ) return;
 
-        foreach( var other in map) {
+    
+        foreach( var other in map ) {
 
-            if( other.getCollidable() == null ) continue;
+            if( !other.getCollidable().getSolid() ) continue;
 
             if( e == other ) continue;
 
@@ -130,13 +134,11 @@ public class Main {
 
         }
 
-
     }
 
     private float lerp( float start, float end, float t ) {
         return start + (end - start) * t;
     }
-
 
     private double getTargetX( float x, Rect targ ) { 
         return ( x + targ.getW() / 2 ) - Raylib.GetScreenWidth () / 2;
@@ -182,7 +184,7 @@ public class Main {
                 
                 collision( t, delta );
                 
-                t.render( cam, delta, spritesheet );
+                if( t.getRenderable() ) t.render( cam, delta, spritesheet );
 
             }
 
@@ -205,7 +207,9 @@ public class Main {
 
 }
 public enum GameObject {
+    None,
     GenericEntity,
+    GenericTile,
     Player,
     Slime
 }
