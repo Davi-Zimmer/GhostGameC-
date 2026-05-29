@@ -9,19 +9,20 @@ namespace Game.World.Entity;
 public class Player : GenericEntity {
     Animation animation = new();
 
-    public Player() {
+    public Player( Main game ): base( game ) {
                 
         Configure<Player>( p => {
 
-            p.setGameObjectID( GameObject.Player )
-            .setSpeed( 200 )
+            p.setGameObjectID( GameObject.Player );
+            p.setSpeed( 200 )
             .setW( 27 )
             .setH( 36 )
             .setXY( 0, 0 );
 
             p.getCollidable()
             .setCanOverlapOthers( true )
-            .setCanPushOthers( true );
+            .setCanPushOthers( true )
+            .setSolid( true );
 
             p.getPhysics()
             .setMass( 1000 );
@@ -34,12 +35,14 @@ public class Player : GenericEntity {
     }
 
     private void fillSprites() {
+
         animation.createAnimation( [ "up", "down", "left", "right" ] );
 
         animation.forSprites( 0,   0, 27, 36, 4, 5, "down"  );
         animation.forSprites( 0,  37, 27, 36, 4, 5, "left"  );
         animation.forSprites( 0,  75, 27, 36, 4, 5, "right" );
         animation.forSprites( 0, 115, 27, 36, 4, 5, "up"    );
+        
     }
 
     private void executeKeys( float delta ) {

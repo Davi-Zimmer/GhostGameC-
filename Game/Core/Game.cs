@@ -2,6 +2,8 @@ using System.Numerics;
 using Game.Objects;
 using Game.Objects.Basics;
 using Game.World.Entity;
+using Game.World.Entity.Enemy;
+using Game.World.Tile;
 using Raylib_cs;
 
 namespace Game.Core;
@@ -10,7 +12,7 @@ public class Main {
 
     Camera2D cam = new();
 
-    private List< GenericEntity > map = [];
+    private List< WorldObject > map = [];
 
     private Player player;
 
@@ -20,7 +22,7 @@ public class Main {
 
     public Main() {
         
-        var p = new Player();
+        var p = new Player( this );
 
         player = p;
         cameraTarget = p;
@@ -29,9 +31,26 @@ public class Main {
 
         configCamera( p );
 
-        map.Add( new GenericEntity().Configure<GenericEntity>( e => e.setXY( 200, 200 ) ) );
+        // map.Add( new GenericEntity( this ).Configure<GenericEntity>( e => e.setXY( 200, 200 ) ) );
+        // map.Add( new GenericEntity( this ).Configure<GenericEntity>( e => e.setXY( 200, 400 ) ) );
 
-        map.Add( new GenericEntity().Configure<GenericEntity>( e => e.setXY( 200, 400 ) ) );
+        map.Add( new GenericTile( this ).Configure<GenericTile>( t => t.setXY( 500f, 200f ) ) );
+
+        map.Add( new Slime( this ) );
+
+        int A = 50;
+        int size = 50;
+
+        for ( int x = 0; x < A; x++ ) {
+
+            for ( int y = 0; y < A; y++ ) {
+                
+                map.Add( new GenericTile( this ).Configure<GenericTile>( t => t.setZ(-1).setXY( x * size, y * size ) ) );
+
+            }
+
+        }
+
         
     }
 
@@ -60,58 +79,72 @@ public class Main {
 
     }
 
-    private void collisionPush( GenericEntity e, GenericEntity other, Collidable.Overlap overlap, float delta ) {
+    private void collisionPush( WorldObject e, WorldObject other, Collidable.Overlap overlap, float delta ) {
 
         bool horizontal = Math.Abs( overlap.x ) < Math.Abs( overlap.y );
 
         if( horizontal ) {
 
-            Collidable oColl = other.getCollidable();  
-            Physics op       = other.getPhysics();  
-            Physics ep       = e.getPhysics();  
+            Collidable oColl = other.getCollidable();
+            Physics op       = other.getPhysics()!;
+            Physics ep       = e.getPhysics()!;
 
-            if( oColl.getCanOverlapOthers() ) e.applyX( overlap.x ); else 
+            if( op != null && ep != null ) {
+                
+                if( oColl.getCanOverlapOthers() ) e.applyX( overlap.x ); else {
+                    
+                    if( e.getCollidable().getCanPushOthers() ) {
 
-            if( e.getCollidable().getCanPushOthers() ) {
+                        op.pushX( Math.Sign( -overlap.x ), ep.getMass(), ep.getKnockback(), delta );
+
+                    }
+
+                }
+
+                if( op.getFixed() ) return;
 
                 op.pushX( Math.Sign( -overlap.x ), ep.getMass(), ep.getKnockback(), delta );
-
             }
 
-            if( op.getFixed() ) return;
+            else if( oColl.getCanOverlapOthers() ) e.applyX( overlap.x );
 
-            op.pushX( Math.Sign( -overlap.x ), ep.getMass(), ep.getKnockback(), delta );
-            
 
         } else {
            
-            Collidable oColl = other.getCollidable();  
-            Physics op       = other.getPhysics();  
-            Physics ep       = e.getPhysics();  
+             Collidable oColl = other.getCollidable();
+            Physics op        = other.getPhysics()!;
+            Physics ep        = e.getPhysics()!;
 
-            if( oColl.getCanOverlapOthers() ) e.applyY( overlap.y ); else 
+            if( op != null && ep != null ) {
+                
+                if( oColl.getCanOverlapOthers() ) e.applyY( overlap.y ); else {
+                    
+                    if( e.getCollidable().getCanPushOthers() ) {
 
-            if( e.getCollidable().getCanPushOthers() ) {
+                        op.pushY( Math.Sign( -overlap.y ), ep.getMass(), ep.getKnockback(), delta );
+
+                    }
+
+                }
+
+                if( op.getFixed() ) return;
 
                 op.pushY( Math.Sign( -overlap.y ), ep.getMass(), ep.getKnockback(), delta );
-
             }
 
-            if( op.getFixed() ) return;
-
-            op.pushY( Math.Sign( -overlap.y ), ep.getMass(), ep.getKnockback(), delta );
+            else if( oColl.getCanOverlapOthers() ) e.applyY( overlap.y );
 
         }
 
     }
 
-    private void collision( GenericEntity e,  float delta ) {
+    private void collision( WorldObject e,  float delta ) {
         
-        // if( e.getCollidable() == null ) return;
+        if( !e.getCollidable().getSolid() ) return;
 
-        foreach( var other in map) {
+        foreach( var other in map ) {
 
-            if( other.getCollidable() == null ) continue;
+            if( !other.getCollidable().getSolid() ) continue;
 
             if( e == other ) continue;
 
@@ -127,13 +160,11 @@ public class Main {
 
         }
 
-
     }
 
     private float lerp( float start, float end, float t ) {
         return start + (end - start) * t;
     }
-
 
     private double getTargetX( float x, Rect targ ) { 
         return ( x + targ.getW() / 2 ) - Raylib.GetScreenWidth () / 2;
@@ -179,7 +210,7 @@ public class Main {
                 
                 collision( t, delta );
                 
-                t.render( cam, delta, spritesheet );
+                if( t.getRenderable() ) t.render( cam, delta, spritesheet );
 
             }
 
@@ -198,8 +229,13 @@ public class Main {
 
     }    
 
+    public Player getPlayer(){ return player; }
+
 }
 public enum GameObject {
+    None,
     GenericEntity,
+    GenericTile,
     Player,
+    Slime
 }

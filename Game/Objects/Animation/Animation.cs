@@ -67,7 +67,7 @@ public class Animation {
         
         animationDelay++;
 
-        if( animationDelay > sprites[ animationName ][ frame ].frames) {
+        if( animationDelay > sprites[ animationName ][ frame ].frames ) {
             
             animationDelay = 0;
 

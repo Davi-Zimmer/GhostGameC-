@@ -23,11 +23,6 @@ public class Collidable {
     public Collidable setCanPushOthers( bool b ) { canPushOthers = b; return this; } 
 
 
-
-
-
-
-
     //--------------------------------- Methods ---------------------------------\\ 
     public static bool IsColliding( Rect a, Rect b,  float delta ){
 
@@ -58,7 +53,6 @@ public class Collidable {
         return t;
 
     }
-
 
     public struct Overlap {
         public float x = 0;
