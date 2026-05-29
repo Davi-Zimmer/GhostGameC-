@@ -21,7 +21,8 @@ public class Player : GenericEntity {
 
             p.getCollidable()
             .setCanOverlapOthers( true )
-            .setCanPushOthers( true );
+            .setCanPushOthers( true )
+            .setSolid( true );
 
             p.getPhysics()
             .setMass( 1000 );

@@ -23,9 +23,11 @@ public class GenericEntity: WorldObject {
 
             e.getCollidable()
             .setCanOverlapOthers( true )
-            .setCanPushOthers( true );
+            .setCanPushOthers( true )
+            .setSolid( true );
             
-            e.getPhysics().setMass( 5 );
+            e.getPhysics()
+            .setMass( 5 );
         });
     }
 

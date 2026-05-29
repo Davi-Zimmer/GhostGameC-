@@ -5,9 +5,9 @@ using Raylib_cs;
 namespace Game.World.Tile;
 
 public class GenericTile : WorldObject {
-
+    
     public GenericTile( Main game ) : base( game ) {
-        
+
         Configure< GenericTile >( t => {
             
             t.setW( 50 )

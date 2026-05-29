@@ -3,6 +3,7 @@ using Game.Objects;
 using Game.Objects.Basics;
 using Game.World.Entity;
 using Game.World.Entity.Enemy;
+using Game.World.Tile;
 using Raylib_cs;
 
 namespace Game.Core;
@@ -33,7 +34,23 @@ public class Main {
         // map.Add( new GenericEntity( this ).Configure<GenericEntity>( e => e.setXY( 200, 200 ) ) );
         // map.Add( new GenericEntity( this ).Configure<GenericEntity>( e => e.setXY( 200, 400 ) ) );
 
+        map.Add( new GenericTile( this ).Configure<GenericTile>( t => t.setXY( 500f, 200f ) ) );
+
         map.Add( new Slime( this ) );
+
+        int A = 50;
+        int size = 50;
+
+        for ( int x = 0; x < A; x++ ) {
+
+            for ( int y = 0; y < A; y++ ) {
+                
+                map.Add( new GenericTile( this ).Configure<GenericTile>( t => t.setZ(-1).setXY( x * size, y * size ) ) );
+
+            }
+
+        }
+
         
     }
 
@@ -69,43 +86,53 @@ public class Main {
         if( horizontal ) {
 
             Collidable oColl = other.getCollidable();
-            Physics op       = other.getPhysics()!;    if( op == null ) return;
-            Physics ep       = e.getPhysics()!;        if( ep == null ) return;
+            Physics op       = other.getPhysics()!;
+            Physics ep       = e.getPhysics()!;
 
-
-            if( oColl.getCanOverlapOthers() ) e.applyX( overlap.x ); else {
+            if( op != null && ep != null ) {
                 
-                if( e.getCollidable().getCanPushOthers() ) {
+                if( oColl.getCanOverlapOthers() ) e.applyX( overlap.x ); else {
+                    
+                    if( e.getCollidable().getCanPushOthers() ) {
 
-                    op.pushX( Math.Sign( -overlap.x ), ep.getMass(), ep.getKnockback(), delta );
+                        op.pushX( Math.Sign( -overlap.x ), ep.getMass(), ep.getKnockback(), delta );
+
+                    }
 
                 }
 
+                if( op.getFixed() ) return;
+
+                op.pushX( Math.Sign( -overlap.x ), ep.getMass(), ep.getKnockback(), delta );
             }
 
-            if( op.getFixed() ) return;
+            else if( oColl.getCanOverlapOthers() ) e.applyX( overlap.x );
 
-            op.pushX( Math.Sign( -overlap.x ), ep.getMass(), ep.getKnockback(), delta );
-            
 
         } else {
            
-            Collidable oColl = other.getCollidable()!; if( oColl == null ) return;
-            Physics op       = other.getPhysics()!;    if( op == null ) return;
-            Physics ep       = e.getPhysics()!;        if( ep == null ) return;
+             Collidable oColl = other.getCollidable();
+            Physics op        = other.getPhysics()!;
+            Physics ep        = e.getPhysics()!;
 
-            if( oColl.getCanOverlapOthers() ) e.applyY( overlap.y ); else {
+            if( op != null && ep != null ) {
                 
-                if( e.getCollidable().getCanPushOthers() ) {
+                if( oColl.getCanOverlapOthers() ) e.applyY( overlap.y ); else {
+                    
+                    if( e.getCollidable().getCanPushOthers() ) {
 
-                    op.pushY( Math.Sign( -overlap.y ), ep.getMass(), ep.getKnockback(), delta );
+                        op.pushY( Math.Sign( -overlap.y ), ep.getMass(), ep.getKnockback(), delta );
+
+                    }
 
                 }
 
-            }
-            if( op.getFixed() ) return;
+                if( op.getFixed() ) return;
 
-            op.pushY( Math.Sign( -overlap.y ), ep.getMass(), ep.getKnockback(), delta );
+                op.pushY( Math.Sign( -overlap.y ), ep.getMass(), ep.getKnockback(), delta );
+            }
+
+            else if( oColl.getCanOverlapOthers() ) e.applyY( overlap.y );
 
         }
 
@@ -113,9 +140,8 @@ public class Main {
 
     private void collision( WorldObject e,  float delta ) {
         
-        if( !e.getCollidable()!.getSolid() ) return;
+        if( !e.getCollidable().getSolid() ) return;
 
-    
         foreach( var other in map ) {
 
             if( !other.getCollidable().getSolid() ) continue;

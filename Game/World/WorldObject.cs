@@ -31,7 +31,6 @@ public class WorldObject: Rect {
     }
 
 
-
     //--------------------------------- Getters ---------------------------------\\ 
     public GameObject getGameObjectID() { return gameObjectID; }
     public bool getRenderable() { return renderable; }
