@@ -10,8 +10,8 @@ public class GenericTile : WorldObject {
 
         Configure< GenericTile >( t => {
             
-            t.setW( 50 )
-            .setH( 50 );
+            t.setW( game.TileSize )
+            .setH( game.TileSize );
 
             t.getCollidable()
             .setSolid( true )

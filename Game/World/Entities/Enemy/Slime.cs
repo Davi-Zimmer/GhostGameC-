@@ -19,7 +19,8 @@ public class Slime: GenericEntity {
         Configure<Slime>( s => {
             s.setSpeed( 200 )
             .setW( 20 )
-            .setH( 20 );
+            .setH( 20 )
+            .setZ( 5 );
             setXY( 400, 0 );
 
             s.getPhysics()

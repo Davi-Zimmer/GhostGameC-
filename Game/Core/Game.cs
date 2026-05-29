@@ -10,6 +10,8 @@ namespace Game.Core;
 
 public class Main {
 
+    public int TileSize = 50;
+
     Camera2D cam = new();
 
     private List< WorldObject > map = [];
@@ -23,7 +25,6 @@ public class Main {
     private float innerWidth = 0;
     private float innerHeight = 0;
 
-
     public Main() {
     
         var p = new Player( this );
@@ -31,16 +32,16 @@ public class Main {
         player = p;
         cameraTarget = p;
 
-        map.Add( p );
+        addToMap( p );
 
         configCamera( p );
 
         // map.Add( new GenericEntity( this ).Configure<GenericEntity>( e => e.setXY( 200, 200 ) ) );
         // map.Add( new GenericEntity( this ).Configure<GenericEntity>( e => e.setXY( 200, 400 ) ) );
 
-        map.Add( new GenericTile( this ).Configure<GenericTile>( t => t.setXY( 500f, 200f ) ) );
+        addToMap( new GenericTile( this ).Configure<GenericTile>( t => t.setXY( 500f, 200f ) ) );
 
-        map.Add( new Slime( this ) );
+        addToMap( new Slime( this ) );
 
         int A = 50;
         int size = 50;
@@ -49,7 +50,7 @@ public class Main {
 
             for ( int y = 0; y < A; y++ ) {
                 
-                map.Add( new GenericTile( this ).Configure<GenericTile>( t => t.setZ(-1).setXY( x * size, y * size ) ) );
+                addToMap( new Grass( this ).Configure<GenericTile>( t => t.setZ(-1).setXY( x * size, y * size ) ) );
 
             }
 
@@ -58,7 +59,7 @@ public class Main {
     }
 
     public void setup() {
-        
+
         innerWidth  = Raylib.GetScreenWidth();
         innerHeight = Raylib.GetScreenHeight();
 
@@ -239,11 +240,11 @@ public class Main {
         
     }
 
-    public void addToMap( GenericEntity entity ) {
+    public void addToMap( WorldObject entity ) {
 
         map.Add( entity );
 
-        map = map.OrderBy( e => e.getZ() ).ToList();
+        map.Sort( ( a, b ) => a.getZ().CompareTo( b.getZ() ) ); // map.OrderBy( e => e.getZ() ).ToList();
 
     }    
 
@@ -255,5 +256,7 @@ public enum GameObject {
     GenericEntity,
     GenericTile,
     Player,
-    Slime
+    Slime,
+    Grass
+
 }
