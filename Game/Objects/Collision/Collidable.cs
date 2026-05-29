@@ -5,16 +5,16 @@ namespace Game.Objects;
 
 public class Collidable {
 
-    public List< GameObject > except = [];
     private bool solid = false;
     private bool canOverlapOthers = true;
     private bool canPushOthers = true;
+    private List< GameObject > collisionExceptions = [];
 
     //--------------------------------- Getters ---------------------------------\\ 
     public bool getSolid() { return solid; }
-    public List< GameObject > getExceptions() { return except; }
     public bool getCanOverlapOthers() { return canOverlapOthers; } 
     public bool getCanPushOthers() { return canPushOthers; } 
+    public List< GameObject > getExceptions() { return collisionExceptions; } 
 
 
     //--------------------------------- Setters ---------------------------------\\ 
@@ -24,6 +24,8 @@ public class Collidable {
 
 
     //--------------------------------- Methods ---------------------------------\\ 
+    public Collidable addException( List<GameObject> ex ) { ex.ForEach( e => collisionExceptions.Add( e ) ); return this; } 
+    
     public static bool IsColliding( Rect a, Rect b,  float delta ){
 
         return (

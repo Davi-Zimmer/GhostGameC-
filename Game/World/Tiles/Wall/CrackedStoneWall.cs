@@ -5,24 +5,28 @@ using Raylib_cs;
 namespace Game.World.Tile;
 
 
-public class StoneWall: GenericTile {
+public class CrackedStoneWall: GenericTile {
     
-    public UniqueSprite sprite = new( 184, 1, 32, 32 );
+    public UniqueSprite sprite = new( 217, 34, 32, 32 );
 
-    public StoneWall( Main game ): base( game ) {
+    public CrackedStoneWall( Main game ): base( game ) {
 
-        Configure<StoneWall>( g => {
+        Configure<CrackedStoneWall>( g => {
             g
             .setW( game.TileSize )
             .setH( game.TileSize )
-            .setZ( 1 );
+            .setZ( 7 );
 
             g.setRenderable( true )
-            .setGameObjectID( GameObject.StoneWall )
+            .setGameObjectID( GameObject.CrackedStoneWall )
             .getCollidable()
             .setSolid( true )
             .setCanOverlapOthers( true )
-            .setCanPushOthers( true );
+            .setCanPushOthers( true )
+            .addException([
+                GameObject.Slime
+            ]);
+
 
         });
 

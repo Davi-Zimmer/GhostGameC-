@@ -40,6 +40,7 @@ public class Main {
         // map.Add( new GenericEntity( this ).Configure<GenericEntity>( e => e.setXY( 200, 400 ) ) );
 
         addToMap( new StoneWall( this ).Configure<StoneWall>( t => t.setXY( 500f, 200f ) ) );
+        addToMap( new CrackedStoneWall( this ).Configure<CrackedStoneWall>( t => t.setXY( 600f, 200f ) ) );
 
         addToMap( new Slime( this ) );
 
@@ -153,6 +154,9 @@ public class Main {
 
             if( !other.getCollidable().getSolid() ) continue;
 
+            if( other.getCollidable().getExceptions().Contains( e.getGameObjectID() ) ) continue;
+            if( e.getCollidable().getExceptions().Contains( other.getGameObjectID() ) ) continue;
+
             if( e == other ) continue;
 
             if ( !Collidable.IsColliding( e, other, delta ) ) continue;
@@ -258,6 +262,7 @@ public enum GameObject {
     Player,
     Slime,
     Grass,
-    StoneWall
+    StoneWall,
+    CrackedStoneWall
 
 }
