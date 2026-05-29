@@ -1,5 +1,4 @@
 using Game.Core;
-using Game.Objects;
 using Game.Objects.Animation;
 using Raylib_cs;
 
@@ -16,7 +15,7 @@ public class Grass: GenericTile {
             g
             .setW( game.TileSize )
             .setH( game.TileSize )
-            .setZ( 100 );
+            .setZ( -1 );
 
             g.setRenderable( true )
             .setGameObjectID( GameObject.Grass )
