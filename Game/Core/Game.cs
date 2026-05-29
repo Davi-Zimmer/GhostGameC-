@@ -20,8 +20,12 @@ public class Main {
 
     public Texture2D spritesheet = new();
 
+    private float innerWidth = 0;
+    private float innerHeight = 0;
+
+
     public Main() {
-        
+    
         var p = new Player( this );
 
         player = p;
@@ -51,10 +55,12 @@ public class Main {
 
         }
 
-        
     }
 
     public void setup() {
+        
+        innerWidth  = Raylib.GetScreenWidth();
+        innerHeight = Raylib.GetScreenHeight();
 
         string path = Directory.GetCurrentDirectory() + "/Assets/placeholder.png";
 
@@ -73,7 +79,7 @@ public class Main {
         cam.Target = new Vector2( p.getX(), p.getY() ); 
     
         cam.Target   = new Vector2( p.getX() + 20.0f, p.getY() + 20.0f );
-        cam.Offset   = new Vector2( Raylib.GetScreenWidth() / 2f, Raylib.GetScreenHeight() / 2f );
+        cam.Offset   = new Vector2( innerWidth / 2f, innerHeight / 2f );
         cam.Rotation = 0.0f;
         cam.Zoom     = 1.0f;
 
@@ -167,11 +173,11 @@ public class Main {
     }
 
     private double getTargetX( float x, Rect targ ) { 
-        return ( x + targ.getW() / 2 ) - Raylib.GetScreenWidth () / 2;
+        return ( x + targ.getW() / 2 ) - innerWidth / 2;
     }
 
     private double getTargetY( float y, Rect targ ) {
-        return ( y + targ.getH() / 2 ) - Raylib.GetScreenHeight() / 2;
+        return ( y + targ.getH() / 2 ) - innerHeight / 2;
     }
 
     private void cameraFollow( float delta ) {
@@ -191,6 +197,16 @@ public class Main {
 
     }
 
+    private bool outsideCamera( Rect r, int margin ) {
+        return (
+            cam.Target.X - margin < r.getX() + r.getW() &&
+            cam.Target.Y - margin < r.getY() + r.getH() &&
+            cam.Target.X + margin + innerWidth  > r.getX() && 
+            cam.Target.Y + margin + innerHeight > r.getY() 
+        );
+
+    }
+
     public void update( float delta ) {
 
         Raylib.ClearBackground( Color.Black );
@@ -206,6 +222,8 @@ public class Main {
             
             foreach( var t in map ) {
                 
+                if( !outsideCamera( t, 100 ) ) continue;
+
                 t.tick( delta );
                 
                 collision( t, delta );
