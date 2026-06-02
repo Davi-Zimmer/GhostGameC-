@@ -1,4 +1,5 @@
 using System.Numerics;
+using Game.Item;
 using Game.Objects;
 using Game.Objects.Basics;
 using Game.World.Entity;
@@ -25,6 +26,8 @@ public class Main {
     private float innerWidth = 0;
     private float innerHeight = 0;
 
+    private List<Action> tickExecutionStack = []; 
+
     public Main() {
     
         var p = new Player( this );
@@ -44,6 +47,8 @@ public class Main {
 
         addToMap( new Slime( this ) );
 
+        addToMap( new GenericItem( this ).Configure<GenericItem>( i => i.setX( 200 )) );
+
         int A = 50;
         int size = 50;
 
@@ -56,6 +61,8 @@ public class Main {
             }
 
         }
+
+
 
     }
 
@@ -146,6 +153,36 @@ public class Main {
 
     }
 
+    private void executeCollisionTrigger( WorldObject e, WorldObject other ) {
+
+        bool remove = other.collisionTrigger( e );
+
+        if( !remove ) return;
+
+        tickExecutionStack.Add( () => {
+            
+            map.Remove( other );
+
+        });
+
+    }
+
+    private void executeStack()  {
+        
+        if( tickExecutionStack.Count > 0 ){
+
+            foreach ( var func in tickExecutionStack ) {
+                
+                func();
+
+            }
+
+            tickExecutionStack = [];
+
+        }
+
+    }
+
     private void collision( WorldObject e,  float delta ) {
         
         if( !e.getCollidable().getSolid() ) return;
@@ -166,6 +203,8 @@ public class Main {
             if( overlap == null ) continue;
 
             // collision trigger
+
+            if( other.getCollisionTrigger() ) executeCollisionTrigger( e, other );
 
             collisionPush( e, other, overlap.Value, delta );
 
@@ -213,6 +252,8 @@ public class Main {
     }
 
     public void update( float delta ) {
+
+        executeStack();
 
         Raylib.ClearBackground( Color.Black );
 
@@ -263,6 +304,7 @@ public enum GameObject {
     Slime,
     Grass,
     StoneWall,
-    CrackedStoneWall
+    CrackedStoneWall,
+    GenericItem
 
 }
