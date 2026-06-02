@@ -26,7 +26,7 @@ public class Main {
     private float innerWidth = 0;
     private float innerHeight = 0;
 
-    private List<Action> tickExecutionStack = []; 
+    public List<Action> tickExecutionStack = []; 
 
     public Main() {
     
@@ -295,9 +295,8 @@ public class Main {
         // <Interface>
 
             renderInterface();
-            
-        // </Interface>
 
+        // </Interface>
 
         
     }
@@ -311,6 +310,12 @@ public class Main {
     }    
 
     public Player getPlayer(){ return player; }
+
+
+    public float getInnerWidth() { return innerWidth; }
+    public float getInnerHeight() { return innerHeight; }
+
+    public Camera2D getCamera() { return cam; }
 
 }
 public enum GameObject {
