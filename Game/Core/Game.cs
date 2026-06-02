@@ -1,9 +1,9 @@
 using System.Numerics;
-using Game.Item;
 using Game.Objects;
 using Game.Objects.Basics;
 using Game.World.Entity;
 using Game.World.Entity.Enemy;
+using Game.World.Item;
 using Game.World.Tile;
 using Raylib_cs;
 
@@ -47,7 +47,7 @@ public class Main {
 
         addToMap( new Slime( this ) );
 
-        addToMap( new GenericItem( this ).Configure<GenericItem>( i => i.setX( 200 )) );
+        addToMap( new Poison( this ).Configure<Poison>( i => i.setX( 200 )) );
 
         int A = 50;
         int size = 50;
@@ -327,6 +327,7 @@ public enum GameObject {
     Grass,
     StoneWall,
     CrackedStoneWall,
-    GenericItem
+    GenericItem,
+    Poison
 
 }

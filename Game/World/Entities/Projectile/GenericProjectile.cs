@@ -6,6 +6,8 @@ namespace Game.World.Entity;
 
 public class GenericProjectile: GenericEntity {
     
+    public int damage = 0; 
+
     public GenericProjectile( Main game ): base( game ) {
         
         Configure<GenericProjectile>( p => {
@@ -20,9 +22,26 @@ public class GenericProjectile: GenericEntity {
             .setCanPushOthers( true )
             .setSolid( true );
 
+            p.setCollisionTrigger( true );
+        
         });
 
     }
+
+    public override bool collisionTrigger<T>(T target) {
+
+        if( target is GenericEntity ) {
+            
+            GenericEntity e = ( target as GenericEntity )!;
+
+            e.applyLife( -getDamage() );
+
+        }
+
+        return true;
+
+    }
+
 
     public override void tick( float delta ) {
     
@@ -32,5 +51,14 @@ public class GenericProjectile: GenericEntity {
         );
 
     }
+
+
+
+    //--------------------------------- Getters ---------------------------------\\ 
+    public int getDamage() { return damage; }
+
+
+    //--------------------------------- Setters ---------------------------------\\ 
+    public GenericProjectile setDamage( int i ) { damage = i; return this; }
 
 }

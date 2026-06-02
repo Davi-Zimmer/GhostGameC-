@@ -60,6 +60,8 @@ public class GenericEntity: WorldObject {
 
     //--------------------------------- Setters ---------------------------------\\ 
 
+    public GenericEntity applyLife( int i ) { setLife( getLife() + i ); return this; } 
+
     public GenericEntity setSpeed( float s ) { speed = s; return this; }
     public GenericEntity setLife( int i ) { life = i; return this; }
 
