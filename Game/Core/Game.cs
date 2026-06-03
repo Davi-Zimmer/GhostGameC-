@@ -251,15 +251,25 @@ public class Main {
 
     }
 
+    private void renderInterface() {
+
+        int width = 100;
+
+        int x = 10;
+        int y = 10;
+
+        int lifePercent = player.getLife() * width / 100;
+
+        Raylib.DrawRectangle( x, y, lifePercent, 30, Color.Green );
+        Raylib.DrawRectangle( lifePercent + x, y, width-lifePercent, 30, Color.Red );
+
+    }
+
     public void update( float delta ) {
 
         executeStack();
 
         Raylib.ClearBackground( Color.Black );
-
-        // <Interface>
-            
-        // </Interface>
 
         // <Game>
             Raylib.BeginMode2D( cam );
@@ -281,6 +291,13 @@ public class Main {
             Raylib.EndMode2D();
 
         // </Game>
+
+        // <Interface>
+
+            renderInterface();
+            
+        // </Interface>
+
 
         
     }

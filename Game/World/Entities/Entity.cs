@@ -9,6 +9,8 @@ public class GenericEntity: WorldObject {
     private Physics physics;
     private Collidable collidable;
 
+    private int life = 1;
+
     private float speed = 1;
 
     public GenericEntity( Main game ): base( game ) {
@@ -54,11 +56,12 @@ public class GenericEntity: WorldObject {
     //--------------------------------- Getters ---------------------------------\\ 
     public float getSpeed() { return speed; }
     public override Physics getPhysics() { return physics!; }
-
+    public int getLife() { return life; }
 
     //--------------------------------- Setters ---------------------------------\\ 
 
     public GenericEntity setSpeed( float s ) { speed = s; return this; }
+    public GenericEntity setLife( int i ) { life = i; return this; }
 
 
 

@@ -12,8 +12,9 @@ public class Player : GenericEntity {
     public Player( Main game ): base( game ) {
                 
         Configure<Player>( p => {
-
-            p.setGameObjectID( GameObject.Player );
+            p.setLife( 100 )
+            .setGameObjectID( GameObject.Player );
+            
             p.setSpeed( 200 )
             .setW( 27 )
             .setH( 36 )
@@ -64,6 +65,8 @@ public class Player : GenericEntity {
         ) {
             animation.stopAnimation();
         }
+
+        if( Raylib.IsKeyPressed( KeyboardKey.F ) ) setLife( getLife() - 10 );
 
         getPhysics().getOrientation().setX( x ).setY( y );
     }
