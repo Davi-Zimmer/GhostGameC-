@@ -40,8 +40,8 @@ public class GenericEntity: WorldObject {
         updatePosition( delta );
         // Console.WriteLine( getPhysics().getOrientation().getX() );
 
-        if( Raylib.IsMouseButtonDown( MouseButton.Left )  ) physics.getAcceleration().applyX( -100 );
-        if( Raylib.IsMouseButtonDown( MouseButton.Right ) ) physics.getAcceleration().applyX(  100 );
+        // if( Raylib.IsMouseButtonDown( MouseButton.Left )  ) physics.getAcceleration().applyX( -100 );
+        // if( Raylib.IsMouseButtonDown( MouseButton.Right ) ) physics.getAcceleration().applyX(  100 );
 
     }
 
@@ -60,9 +60,10 @@ public class GenericEntity: WorldObject {
 
     //--------------------------------- Setters ---------------------------------\\ 
 
+    public GenericEntity applyLife( int i ) { setLife( getLife() + i ); return this; } 
+
     public GenericEntity setSpeed( float s ) { speed = s; return this; }
     public GenericEntity setLife( int i ) { life = i; return this; }
-
 
 
     public override float extractX( float delta ) { 
@@ -81,7 +82,7 @@ public class GenericEntity: WorldObject {
             getSpeed()
         );
 
-        setXY( 
+        setXY(
             getX() + ( physics.getAcceleration().getX() + vec.x ) * delta, 
             getY() + ( physics.getAcceleration().getY() + vec.y ) * delta 
         );

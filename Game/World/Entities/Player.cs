@@ -68,9 +68,56 @@ public class Player : GenericEntity {
 
         if( Raylib.IsKeyPressed( KeyboardKey.F ) ) setLife( getLife() - 10 );
 
+        if( Raylib.IsMouseButtonPressed( MouseButton.Left ) ) shot();
+
         getPhysics().getOrientation().setX( x ).setY( y );
     }
     
+    private void shot() {
+        
+        Vector2 mouse = Raylib.GetScreenToWorld2D(
+            Raylib.GetMousePosition(),
+            game.getCamera()
+        );
+        
+        float centerX = getMiddleX();
+        float centerY = getMiddleY();
+
+        double dirX = mouse.X - centerX;
+        double dirY = mouse.Y - centerY;
+
+        double length = Math.Sqrt(dirX * dirX + dirY * dirY);
+
+        if(length > 0) {
+            dirX /= length;
+            dirY /= length;
+        }
+
+        float speed = 1000;
+
+        GenericProjectile entity = new GenericProjectile( game ).Configure<GenericProjectile>( e => {
+            e.setRenderable( true )
+            .getPhysics()!
+            .setFriction( 1 )
+            .getAcceleration()
+            .setXY( (float)dirX, (float)dirY );
+        
+            e.setSpeed( speed );
+            e.setW( 10 ).setH( 10 );
+            e.setXY( centerX, centerY );
+
+            e.getCollidable()
+            .getExceptions()
+            .Add( GameObject.Player );
+
+        });
+
+        game.tickExecutionStack.Add( () => {
+            game.addToMap( entity );
+        });
+
+    }
+
     public override void tick( float delta ){
 
         updatePosition( delta );

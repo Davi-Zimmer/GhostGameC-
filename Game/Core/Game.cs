@@ -1,9 +1,9 @@
 using System.Numerics;
-using Game.Item;
 using Game.Objects;
 using Game.Objects.Basics;
 using Game.World.Entity;
 using Game.World.Entity.Enemy;
+using Game.World.Item;
 using Game.World.Tile;
 using Raylib_cs;
 
@@ -26,7 +26,7 @@ public class Main {
     private float innerWidth = 0;
     private float innerHeight = 0;
 
-    private List<Action> tickExecutionStack = []; 
+    public List<Action> tickExecutionStack = []; 
 
     public Main() {
     
@@ -47,7 +47,7 @@ public class Main {
 
         addToMap( new Slime( this ) );
 
-        addToMap( new GenericItem( this ).Configure<GenericItem>( i => i.setX( 200 )) );
+        addToMap( new Poison( this ).Configure<Poison>( i => i.setX( 200 )) );
 
         int A = 50;
         int size = 50;
@@ -295,9 +295,8 @@ public class Main {
         // <Interface>
 
             renderInterface();
-            
-        // </Interface>
 
+        // </Interface>
 
         
     }
@@ -312,6 +311,12 @@ public class Main {
 
     public Player getPlayer(){ return player; }
 
+
+    public float getInnerWidth() { return innerWidth; }
+    public float getInnerHeight() { return innerHeight; }
+
+    public Camera2D getCamera() { return cam; }
+
 }
 public enum GameObject {
     None,
@@ -322,6 +327,7 @@ public enum GameObject {
     Grass,
     StoneWall,
     CrackedStoneWall,
-    GenericItem
+    GenericItem,
+    Poison
 
 }
