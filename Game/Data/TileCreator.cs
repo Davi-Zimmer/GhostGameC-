@@ -52,49 +52,9 @@ public class TileDefinition {
 
 }
 
-public class TileConfig {
-    private Main game;
+public class TileCreator {
 
-    public TileConfig( Main game ) { this.game = game; }
-
-    private List<TileDefinition> objects = [
-        new TileDefinition()
-        .setGameObjectID( GameObject.Grass )
-        .setZ( -1 )
-        .setRenderable( true )
-        .setSolid( false )
-        .setUniqueSprite(
-            new Rectangle( 151, 1, 32, 32 )
-        ),
-
-        new TileDefinition()
-        .setGameObjectID( GameObject.StoneWall )
-        .setZ( 0 )
-        .setRenderable( true )
-        .setSolid( true )
-        .setOverlapOthers( true )
-        .setPushOthers( true )
-        .setUniqueSprite(
-            new Rectangle( 184, 1, 32, 32 )
-        ),
-
-        new TileDefinition()
-        .setGameObjectID( GameObject.CrackedStoneWall )
-        .setZ( 7 )
-        .setRenderable( true )
-        .setSolid( true )
-        .setOverlapOthers( true )
-        .setPushOthers( true )
-        .setUniqueSprite(
-            new Rectangle( 217, 34, 32, 32  )
-        )
-        .setCollisionExeption([
-            GameObject.Slime
-        ])
-
-    ];
-
-    private GenericTile loadTile( TileDefinition def ) {
+    private static GenericTile LoadTile( TileDefinition def, Main game ) {
         
         GenericTile tile = new( game );
 
@@ -139,27 +99,27 @@ public class TileConfig {
         return tile;
 
     }
+    
+    public static TileDefinition? Find( GameObject o ) {
 
-    public static GenericTile? NewTile( GameObject id, Main game ) {
-        
-        TileConfig config = new( game );
-
-        foreach( var tileDef in config.objects ) {
-            
-            if( tileDef.gameObjectID == id ) {
-                
-                GenericTile tile = config.loadTile( tileDef );
-
-                return tile;
-
-
-            }
-
+        switch( o ) {
+            case GameObject.Grass            : return Tiles.Grass();
+            case GameObject.StoneWall        : return Tiles.StoneWall();
+            case GameObject.CrackedStoneWall : return Tiles.CrackedStoneWall();
         }
-
+    
         return null;
 
     }
 
-}
+    public static GenericTile? NewTile( GameObject id, Main game ) {
+        
+        var t = Find( id );
 
+        if( t == null ) return null;
+
+        return LoadTile( t, game );
+
+    }
+
+}

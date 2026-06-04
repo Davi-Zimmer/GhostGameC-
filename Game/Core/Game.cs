@@ -40,7 +40,7 @@ public class Main {
 
         configCamera( p );
 
-        TileConfig c = new( this );
+        TileCreator c = new();
 
         createTileInMap( GameObject.StoneWall       , t => t.setXY( 500f, 200f ) );
         createTileInMap( GameObject.CrackedStoneWall, t => t.setXY( 600f, 200f ) );
@@ -285,6 +285,15 @@ public class Main {
 
         executeStack();
 
+        if( player.getInvetory().open ) {
+            
+            player.getInvetory().tick( delta );
+            
+            player.getInvetory().render( cam, delta, spritesheet );
+
+            return;
+        }
+
         Raylib.ClearBackground( Color.Black );
 
         // <Game>
@@ -325,11 +334,10 @@ public class Main {
 
     }    
 
-
     public delegate void Callback( GenericTile t );
     public void createTileInMap( GameObject gameObject, Callback func ) {
         
-        GenericTile? tile = TileConfig.NewTile( gameObject, this );
+        GenericTile? tile = TileCreator.NewTile( gameObject, this );
 
         if( tile == null) return; 
             
