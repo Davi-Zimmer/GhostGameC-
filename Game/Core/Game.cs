@@ -244,7 +244,7 @@ public class Main {
 
     }
 
-    private bool outsideCamera( Rect r, int margin ) {
+    public bool outsideCamera( Rect r, int margin ) {
         return (
             cam.Target.X - margin < r.getX() + r.getW() &&
             cam.Target.Y - margin < r.getY() + r.getH() &&
@@ -287,6 +287,15 @@ public class Main {
     }
 
     public void update( float delta ) {
+        
+        if( mapCreator.open ) {
+
+            mapCreator.update( ref cam, delta, spritesheet );
+
+            return;
+        }
+
+        if( Raylib.IsKeyPressed( KeyboardKey.F1 ) ) mapCreator.toggleMapCreation();
 
         executeStack();
 

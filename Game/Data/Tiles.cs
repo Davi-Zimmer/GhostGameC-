@@ -15,7 +15,7 @@ public abstract class Tiles {
         .setRenderable( true )
         .setSolid( false )
         .setUniqueSprite(
-            Sprites.Grass( null )
+            Sprites.Grass.Middle
         );
 
     }
@@ -29,7 +29,7 @@ public abstract class Tiles {
         .setOverlapOthers( true )
         .setPushOthers( true )
         .setUniqueSprite(
-            Sprites.StoneWall( null )
+            Sprites.StoneWall.Middle
         )
         .setGameObjectID( GameObject.StoneWall );
     
@@ -45,7 +45,7 @@ public abstract class Tiles {
         .setOverlapOthers( true )
         .setPushOthers( true )
         .setUniqueSprite(
-            Sprites.CrackedStoneWall( null )
+            Sprites.CrackedStoneWall.Middle
         )
         .setCollisionExeption([
             GameObject.Slime

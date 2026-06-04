@@ -1,6 +1,7 @@
 
 using Game.Core;
 using Game.Objects.Animation;
+using Game.Rendering;
 using Raylib_cs;
 
 namespace Game.World.Entity.Enemy;
@@ -44,7 +45,7 @@ public class Slime: GenericEntity {
         
         animation.createAnimation( [ "jump" ] );
 
-        animation.forSprites( 1,  158, 48, 42, 3, 5, "jump" );
+        animation.forSprites( Sprites.Slime.JumpRight, 3, 5, "jump" );
 
     }
 

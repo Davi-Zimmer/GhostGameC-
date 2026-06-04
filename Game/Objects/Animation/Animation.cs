@@ -31,15 +31,15 @@ public class Animation {
     }
 
 
-    public void forSprites( int x, int y, int w, int h, int frames, int frameDelay, string animationName ) {
+    public void forSprites( Rectangle r, int frames, int frameDelay, string animationName ) {
         
         sprites[ animationName ] = [];
 
         for( int i = 0; i < frames; i++ ){
 
             sprites[ animationName ].Add((
-                x + i * w + i * 2,
-                y, w, h, frameDelay
+                (int)r.X + i * (int)r.Width + i * 2,
+                (int)r.Y, (int)r.Width, (int)r.Height, frameDelay
             ));
 
 
