@@ -1,6 +1,7 @@
 using Game.Core;
 using Game.Objects;
 using Game.Objects.Animation;
+using Game.World.Entity;
 using Raylib_cs;
 
 namespace Game.World.Item;
@@ -31,6 +32,10 @@ public class GenericItem: WorldObject {
 
     }
 
+    public virtual void use() {
+        
+    }
+
     public override void render( Camera2D cam, float delta, Texture2D spriteSheet ) {
         
         sprite.render( this, spriteSheet );
@@ -41,7 +46,9 @@ public class GenericItem: WorldObject {
 
         if( target.getGameObjectID() == GameObject.Player ) {
             
-            Console.WriteLine("Pegou");
+            Player targ = (target as Player)!; 
+
+            targ.getInvetory().addItem( this );
 
             return true;
 
