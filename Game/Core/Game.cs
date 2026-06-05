@@ -1,4 +1,5 @@
 using System.Numerics;
+using Game.Data;
 using Game.Objects;
 using Game.Objects.Basics;
 using Game.World.Entity;
@@ -39,11 +40,10 @@ public class Main {
 
         configCamera( p );
 
-        // map.Add( new GenericEntity( this ).Configure<GenericEntity>( e => e.setXY( 200, 200 ) ) );
-        // map.Add( new GenericEntity( this ).Configure<GenericEntity>( e => e.setXY( 200, 400 ) ) );
+        TileConfig c = new( this );
 
-        addToMap( new StoneWall( this ).Configure<StoneWall>( t => t.setXY( 500f, 200f ) ) );
-        addToMap( new CrackedStoneWall( this ).Configure<CrackedStoneWall>( t => t.setXY( 600f, 200f ) ) );
+        createTileInMap( GameObject.StoneWall       , t => t.setXY( 500f, 200f ) );
+        createTileInMap( GameObject.CrackedStoneWall, t => t.setXY( 600f, 200f ) );
 
         addToMap( new Slime( this ) );
 
@@ -56,14 +56,12 @@ public class Main {
 
             for ( int y = 0; y < A; y++ ) {
                 
-                addToMap( new Grass( this ).Configure<GenericTile>( t => t.setXY( x * size, y * size ) ) );
-
+                createTileInMap( GameObject.Grass, t => t.setXY( x * size, y * size ) );
+                
             }
 
         }
-
-
-
+    
     }
 
     public void setup() {
@@ -253,15 +251,33 @@ public class Main {
 
     private void renderInterface() {
 
-        int width = 100;
+        {
+            int width = 100;
 
-        int x = 10;
-        int y = 10;
+            int x = 10;
+            int y = 10;
 
-        int lifePercent = player.getLife() * width / 100;
+            int lifePercent = player.getLife() * width / 100;
 
-        Raylib.DrawRectangle( x, y, lifePercent, 30, Color.Green );
-        Raylib.DrawRectangle( lifePercent + x, y, width-lifePercent, 30, Color.Red );
+            Raylib.DrawRectangle( x, y, lifePercent, 30, Color.Green );
+            Raylib.DrawRectangle( lifePercent + x, y, width-lifePercent, 30, Color.Red );
+        }
+
+        {
+            int sizeX = 20;
+            int sizeY = 30;
+
+            int border = 10;
+            int gap = 5;
+
+            for ( int x = 0; x < 3; x++ ) {
+
+                float y = innerHeight - 10;
+                Raylib.DrawRectangle( border + x * sizeX + gap * x, (int)y - sizeY - border, sizeX, sizeY, new Color( 255, 0, 100, .2f ) );
+
+            }
+
+        }
 
     }
 
@@ -309,25 +325,34 @@ public class Main {
 
     }    
 
+
+    public delegate void Callback( GenericTile t );
+    public void createTileInMap( GameObject gameObject, Callback func ) {
+        
+        GenericTile? tile = TileConfig.NewTile( gameObject, this );
+
+        if( tile == null) return; 
+            
+        func( tile! );
+
+        addToMap( tile );
+
+    }
+
     public Player getPlayer(){ return player; }
-
-
     public float getInnerWidth() { return innerWidth; }
     public float getInnerHeight() { return innerHeight; }
 
     public Camera2D getCamera() { return cam; }
 
 }
+
 public enum GameObject {
     None,
-    GenericEntity,
-    GenericTile,
-    Player,
-    Slime,
-    Grass,
-    StoneWall,
-    CrackedStoneWall,
-    GenericItem,
-    Poison
+    GenericEntity, GenericItem, GenericTile,
+    Player, Slime,
+    Poison,
+
+    Grass, StoneWall, CrackedStoneWall,
 
 }
