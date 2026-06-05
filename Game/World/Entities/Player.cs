@@ -1,5 +1,6 @@
 using System.Numerics;
 using Game.Core;
+using Game.Interface;
 using Game.Objects;
 using Game.Objects.Animation;
 using Raylib_cs;
@@ -8,6 +9,8 @@ namespace Game.World.Entity;
 
 public class Player : GenericEntity {
     Animation animation = new();
+
+    private Inventory inventory;
 
     public Player( Main game ): base( game ) {
                 
@@ -31,6 +34,8 @@ public class Player : GenericEntity {
 
         });
         
+        inventory = new Inventory( game );
+
         fillSprites();
 
         // Console.WriteLine( getPhysics().getOrientation().getX() );
@@ -67,6 +72,8 @@ public class Player : GenericEntity {
         }
 
         if( Raylib.IsKeyPressed( KeyboardKey.F ) ) setLife( getLife() - 10 );
+        
+        if( Raylib.IsKeyPressed( KeyboardKey.Tab ) ) inventory.toggle();
 
         if( Raylib.IsMouseButtonPressed( MouseButton.Left ) ) shot();
 
@@ -139,6 +146,10 @@ public class Player : GenericEntity {
 
     //--------------------------------- Getters ---------------------------------\\ 
 
+
+    //--------------------------------- Setters ---------------------------------\\ 
+
+    public Inventory getInvetory() { return inventory; }
 
     //--------------------------------- Setters ---------------------------------\\ 
 
