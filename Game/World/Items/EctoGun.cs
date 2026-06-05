@@ -1,5 +1,6 @@
 using System.Numerics;
 using Game.Core;
+using Game.Rendering;
 using Game.World.Entity;
 using Raylib_cs;
 
@@ -9,6 +10,25 @@ public class EctoGun: GenericItem {
 
     public EctoGun( Main game ): base( game ) {
         
+        Configure<EctoGun>( g => {
+            g
+            .setW( game.TileSize )
+            .setH( game.TileSize )
+            .setZ( 9 );
+
+            g.setRenderable( true )
+            .setGameObjectID( GameObject.EctoGun )
+            .getCollidable()
+            .setSolid( true )
+            .setCanOverlapOthers( false )
+            .setCanPushOthers( false );
+
+            g.setCollisionTrigger( true );
+
+            g.loadSpriteRect( Sprites.EctoGun.icon );
+
+        });
+
 
     }
 

@@ -21,7 +21,6 @@ public class GrassSprites {
     
 }
 
-
 public class StoneWallSprites {
     public Rectangle Middle = new( 184, 1, 32, 32 );
     
@@ -32,10 +31,19 @@ public class CrackedStoneWallSprites {
     
 }
 
-public record SpritePreview(
-    string Name,
-    Rectangle Rect
-);
+
+public class PoisonSprites {
+    
+    public Rectangle icon = new( 151, 34, 32, 32 );
+ 
+}
+
+public class EctoGunSprites {
+    
+    public Rectangle icon = new( 151, 67, 32, 32 );
+ 
+}
+
 
 public  class Sprites {
 
@@ -46,6 +54,11 @@ public  class Sprites {
     public static readonly GrassSprites            Grass             = new();
     public static readonly StoneWallSprites        StoneWall         = new();
     public static readonly CrackedStoneWallSprites CrackedStoneWall  = new();
+
+
+    public static readonly PoisonSprites  Poison = new();
+    public static readonly EctoGunSprites EctoGun = new();
+
 
     public static List<Rectangle> GetRects( object obj ) {
 

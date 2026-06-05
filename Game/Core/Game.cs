@@ -373,7 +373,7 @@ public enum GameObject {
     None,
     GenericEntity, GenericItem, GenericTile,
     Player, Slime,
-    Poison,
+    Poison, EctoGun,
 
     Grass, StoneWall, CrackedStoneWall,
 

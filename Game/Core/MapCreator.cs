@@ -3,6 +3,7 @@ using Game.Objects;
 using Game.Rendering;
 using Game.World.Entity;
 using Game.World.Entity.Enemy;
+using Game.World.Item;
 using Game.World.Tile;
 using Raylib_cs;
 
@@ -99,6 +100,18 @@ public class MapCreator {
                 GameObject.CrackedStoneWall,
                 typeof( GenericTile ),
                 Sprites.GetRects( Sprites.CrackedStoneWall )
+            ),
+
+            new PaletteItem (
+                GameObject.Poison,
+                typeof( Poison ),
+                Sprites.GetRects( Sprites.Poison )
+            ),
+
+            new PaletteItem (
+                GameObject.EctoGun,
+                typeof( EctoGun ),
+                Sprites.GetRects( Sprites.EctoGun )
             ),
 
         };
