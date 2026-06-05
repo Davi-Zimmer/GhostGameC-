@@ -27,7 +27,9 @@ public class Main {
     private float innerWidth = 0;
     private float innerHeight = 0;
 
-    public List<Action> tickExecutionStack = []; 
+    public List<Action> tickExecutionStack = [];
+
+    public MapCreator mapCreator;
 
     public Main() {
     
@@ -35,6 +37,8 @@ public class Main {
 
         player = p;
         cameraTarget = p;
+
+        mapCreator = new MapCreator( this );
 
         addToMap( p );
 
@@ -47,7 +51,8 @@ public class Main {
 
         addToMap( new Slime( this ) );
 
-        addToMap( new Poison( this ).Configure<Poison>( i => i.setX( 200 )) );
+        addToMap( new Poison ( this ).Configure<Poison>( i => i.setX( 200 )) );
+        addToMap( new EctoGun( this ).Configure<EctoGun>( i => i.setXY( 200, 200 )) );
 
         int A = 50;
         int size = 50;

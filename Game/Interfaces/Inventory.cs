@@ -49,4 +49,16 @@ public class Inventory {
     public Inventory setSelectedItem( int i ) { selectedItem = i; return this; }
 
 
+
+    public Inventory addItem( GenericItem item ){ items.Add( item ); return this; }
+
+    public Inventory useSelectedItem() {
+        
+        if( items.Count == 0 ) return this;
+
+        items[ selectedItem ].use();
+
+        return this;
+    }
+
 }
