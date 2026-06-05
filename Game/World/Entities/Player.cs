@@ -3,6 +3,7 @@ using Game.Core;
 using Game.Interface;
 using Game.Objects;
 using Game.Objects.Animation;
+using Game.Rendering;
 using Raylib_cs;
 
 namespace Game.World.Entity;
@@ -45,10 +46,10 @@ public class Player : GenericEntity {
 
         animation.createAnimation( [ "up", "down", "left", "right" ] );
 
-        animation.forSprites( 0,   0, 27, 36, 4, 5, "down"  );
-        animation.forSprites( 0,  37, 27, 36, 4, 5, "left"  );
-        animation.forSprites( 0,  75, 27, 36, 4, 5, "right" );
-        animation.forSprites( 0, 115, 27, 36, 4, 5, "up"    );
+        animation.forSprites( Sprites.Player.Down , 4, 5, "down"  );
+        animation.forSprites( Sprites.Player.Left , 4, 5, "left"  );
+        animation.forSprites( Sprites.Player.Right, 4, 5, "right" );
+        animation.forSprites( Sprites.Player.Up   , 4, 5, "up"    );
         
     }
 

@@ -1,6 +1,94 @@
+using System.Reflection;
+using Game.World.Entity;
 using Raylib_cs;
 
 namespace Game.Rendering;
+
+public class PlayerSprites {
+    public readonly Rectangle Down  = new( 0,   0, 27, 36 );
+    public readonly Rectangle Left  = new( 0,  37, 27, 36 );
+    public readonly Rectangle Right = new( 0,  75, 27, 36 );
+    public readonly Rectangle Up    = new( 0, 115, 27, 36 );
+}
+
+public class SlimeSprites {
+    public Rectangle JumpRight = new( 1,  158, 48, 42 );
+
+}
+
+public class GrassSprites {
+    public Rectangle Middle = new( 151, 1, 32, 32 );
+    
+}
+
+
+public class StoneWallSprites {
+    public Rectangle Middle = new( 184, 1, 32, 32 );
+    
+}
+
+public class CrackedStoneWallSprites {
+    public Rectangle Middle = new( 217, 34, 32, 32 );
+    
+}
+
+public record SpritePreview(
+    string Name,
+    Rectangle Rect
+);
+
+public  class Sprites {
+
+    public static readonly PlayerSprites Player = new();
+    public static readonly SlimeSprites  Slime  = new();
+
+
+    public static readonly GrassSprites            Grass             = new();
+    public static readonly StoneWallSprites        StoneWall         = new();
+    public static readonly CrackedStoneWallSprites CrackedStoneWall  = new();
+
+    public static List<Rectangle> GetRects( object obj ) {
+
+        var resultado = new List<Rectangle>();
+
+        var campos = obj.GetType().GetFields(
+            BindingFlags.Instance |
+            BindingFlags.Public |
+            BindingFlags.NonPublic
+        );
+
+        foreach( var campo in campos ) {
+            
+            if (campo.FieldType == typeof(Rectangle)) {
+
+                resultado.Add((Rectangle)campo.GetValue(obj)!);
+
+            }
+
+        }
+
+        return resultado;
+
+    }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
 
 public enum Variation {
     TopLeft    , Top    , TopRight,
@@ -8,6 +96,10 @@ public enum Variation {
     BottomLeft , Bottom , BottomRight
 }
 
+
+public enum PlayerVariation {
+    Down, Left, Right, Up
+}
 public abstract class Sprites {
     public delegate Rectangle GetRectCallback();
 
@@ -57,4 +149,19 @@ public abstract class Sprites {
         return GetRectangle( list, variation );
     }
 
+    public static Rectangle Player() {
+
+        Dictionary< Variation, GetRectCallback > list = new() {
+        
+            { PlayerVariation.Down  , () =>  new Rectangle( 0,   0, 27, 36 ) }
+            { PlayerVariation.Left  , () =>  new Rectangle( 0,  37, 27, 36 ) }
+            { PlayerVariation.Right , () =>  new Rectangle( 0,  75, 27, 36 ) }
+            { PlayerVariation.Up    , () =>  new Rectangle( 0, 115, 27, 36 ) }
+            
+        };
+
+        return GetRectangle( list, variation ); 
+    } 
+
 }
+*/
