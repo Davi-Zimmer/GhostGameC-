@@ -1,16 +1,15 @@
 using Game.Core;
 using Game.Objects;
 using Game.Objects.Animation;
+using Game.Rendering;
 using Game.World.Entity;
 using Raylib_cs;
 
 namespace Game.World.Item;
 
 
-public class Poison: WorldObject {
+public class Poison: GenericItem {
     
-    public UniqueSprite sprite = new( 184, 34, 32, 32 );
-
     public Poison( Main game ): base( game ) {
 
         Configure<Poison>( g => {
@@ -20,13 +19,15 @@ public class Poison: WorldObject {
             .setZ( 9 );
 
             g.setRenderable( true )
-            .setGameObjectID( GameObject.GenericItem )
+            .setGameObjectID( GameObject.Poison )
             .getCollidable()
             .setSolid( true )
             .setCanOverlapOthers( false )
             .setCanPushOthers( false );
 
             g.setCollisionTrigger( true );
+
+            g.loadSpriteRect( Sprites.Poison.icon );
 
         });
 

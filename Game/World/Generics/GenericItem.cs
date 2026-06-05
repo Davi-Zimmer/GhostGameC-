@@ -36,6 +36,11 @@ public class GenericItem: WorldObject {
         
     }
 
+    protected GenericItem loadSpriteRect( Rectangle r ) {
+        sprite.rect = r; 
+        return this;
+    }
+
     public override void render( Camera2D cam, float delta, Texture2D spriteSheet ) {
         
         sprite.render( this, spriteSheet );
