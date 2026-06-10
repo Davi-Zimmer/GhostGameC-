@@ -1,3 +1,4 @@
+using System.CodeDom.Compiler;
 using System.Reflection;
 using Game.World.Entity;
 using Raylib_cs;
@@ -12,7 +13,7 @@ public class PlayerSprites {
 }
 
 public class SlimeSprites {
-    public Rectangle JumpRight = new( 1,  158, 48, 42 );
+    public Rectangle JumpRight = new( 1, 158, 48, 42 );
 
 }
 
@@ -31,7 +32,6 @@ public class CrackedStoneWallSprites {
     
 }
 
-
 public class PoisonSprites {
     
     public Rectangle icon = new( 151, 34, 32, 32 );
@@ -45,7 +45,7 @@ public class EctoGunSprites {
 }
 
 
-public  class Sprites {
+public class Sprites {
 
     public static readonly PlayerSprites Player = new();
     public static readonly SlimeSprites  Slime  = new();

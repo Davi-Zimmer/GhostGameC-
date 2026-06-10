@@ -3,7 +3,7 @@ namespace Game.Objects.Animation;
 using System.Numerics;
 using Game.Objects.Basics;
 using Raylib_cs;
-using SpriteType = ( int x, int y, int w, int h, int frames );
+using SpriteType = ( int x, int y, int w, int h, int frames, int multplyerW, int rotationX );
 
 public class Animation {
     
@@ -31,7 +31,7 @@ public class Animation {
     }
 
 
-    public void forSprites( Rectangle r, int frames, int frameDelay, string animationName ) {
+    public void forSprites( Rectangle r, int frames, int frameDelay, string animationName, int multplyerW, int rotation ) {
         
         sprites[ animationName ] = [];
 
@@ -39,12 +39,12 @@ public class Animation {
 
             sprites[ animationName ].Add((
                 (int)r.X + i * (int)r.Width + i * 2,
-                (int)r.Y, (int)r.Width, (int)r.Height, frameDelay
+                (int)r.Y, (int)r.Width, (int)r.Height, frameDelay,
+                multplyerW,
+                rotation
             ));
 
-
         }
-
 
     }
 
@@ -86,10 +86,13 @@ public class Animation {
     public Animation setAnimationRunning( bool b ) { animationRuning = b; return this; }
     
     public bool isRunning() { return animationRuning; }
-    public SpriteType getFrameCoords() { return sprites.ContainsKey( animationName ) ? sprites[ animationName ][ frame ] : ( 0, 0, 0, 0, 0 ); }
+    public SpriteType getFrameCoords() { return sprites.ContainsKey( animationName ) ? sprites[ animationName ][ frame ] : ( 0, 0, 0, 0, 0, 0, 0); }
     public Rectangle getFrameRectangle() {
+
         var s = getFrameCoords();
-        return new Rectangle( s.x, s.y, s.w, s.h );
+
+        return new Rectangle( s.x, s.y, s.w * s.multplyerW, s.h );
+
     }
     public int getFrame() { return frame; }
 
@@ -101,18 +104,18 @@ public class Animation {
         
     }
 
-    public void render( Rect r, Texture2D spriteSheet ) {
+    public void render( WorldObject r, Texture2D spriteSheet ) {
 
         Rectangle rect = getFrameRectangle();
 
-        var vec = new Vector2( 0, 0 );
+        var vec = new Vector2( r.getW() / 2,r. getH() / 2 );
     
         Raylib.DrawTexturePro( 
             spriteSheet,
             rect,
-            new Rectangle( r.getX(), r.getY(), r.getW(), r.getH() ),
+            new Rectangle( r.getMiddleX(), r.getMiddleY(), r.getW(), r.getH() ),
             vec,
-            0,
+            r.getRotationX(),
             Color.White
         );
 
