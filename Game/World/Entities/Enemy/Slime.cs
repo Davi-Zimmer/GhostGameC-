@@ -38,17 +38,16 @@ public class Slime: GenericEntity {
 
         fillSprites();
 
-
     }
 
     private void fillSprites() {
         
-        animation.createAnimation( [ "jump" ] );
+        animation.createAnimation( [ "jumpRight", "jumpLeft" ] );
 
-        animation.forSprites( Sprites.Slime.JumpRight, 3, 5, "jump" );
+        animation.forSprites( Sprites.Slime.JumpRight, 3, 5, "jumpRight",  1, 0 );
+        animation.forSprites( Sprites.Slime.JumpRight, 3, 5, "jumpLeft" , -1, 0 );
 
     }
-
 
     private void jump() {
         
@@ -59,6 +58,9 @@ public class Slime: GenericEntity {
 
         getPhysics().getAcceleration().apply( dx, dy );
 
+        if( dx > 0 ) animation.changeAnimation( "jumpRight" );
+        else         animation.changeAnimation( "jumpLeft" );
+            
     }
 
     public override void tick( float delta ) {

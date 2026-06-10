@@ -72,7 +72,7 @@ public class MapCreator {
 
         List<PaletteItem> items = new() {
 
-            new PaletteItem(
+            new PaletteItem (
                 GameObject.Player,
                 typeof( Player ),
                 Sprites.GetRects( Sprites.Player )
@@ -113,7 +113,7 @@ public class MapCreator {
                 typeof( EctoGun ),
                 Sprites.GetRects( Sprites.EctoGun )
             ),
-
+            
         };
         
         List<OrganizedPeletteItem> list = [];

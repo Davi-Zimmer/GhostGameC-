@@ -12,6 +12,8 @@ public class WorldObject: Rect {
     private Physics? physics = null;
     private Collidable collidable = new();
 
+    public int rotationX = 0;
+
     private bool useCollisionTrigger = false;
 
     protected Main game;
@@ -45,6 +47,7 @@ public class WorldObject: Rect {
     public virtual Physics? getPhysics() { return physics; }
     public Collidable getCollidable() { return collidable; }
     public bool getCollisionTrigger(){ return useCollisionTrigger; }
+    public int getRotationX() { return rotationX; }
 
     //--------------------------------- Setters ---------------------------------\\ 
     public WorldObject setGameObjectID( GameObject id ) { gameObjectID = id; return this;  }
@@ -54,5 +57,7 @@ public class WorldObject: Rect {
     public WorldObject addPhysic() { physics = new Physics( this ); return this; }
     public WorldObject addCollision() { collidable = new Collidable(); return this; }
     public WorldObject setCollisionTrigger( bool b ){ useCollisionTrigger = b; return this; }
+    public WorldObject setRotationX( int r ) { rotationX = r; return this; }
+
 
 }
