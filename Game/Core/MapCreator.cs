@@ -1,5 +1,7 @@
 using System.Numerics;
+using Game.Data;
 using Game.Objects;
+using Game.Objects.Basics;
 using Game.Rendering;
 using Game.World.Entity;
 using Game.World.Entity.Enemy;
@@ -44,7 +46,6 @@ public class OrganizedPeletteItem {
 
 }
 
-
 public class MapCreator {
     
     public Main game;
@@ -74,7 +75,7 @@ public class MapCreator {
 
             new PaletteItem ( GameObject.Player           , typeof( Player )      , Sprites.GetRects( Sprites.Player ) ),
             new PaletteItem ( GameObject.Slime            , typeof( Slime )       , Sprites.GetRects( Sprites.Slime ) ),
-            new PaletteItem ( GameObject.MiddleGrass      , typeof( GenericTile ) , Sprites.GetRects( Sprites.Grass ) ),
+            new PaletteItem ( GameObject.Grass            , typeof( GenericTile ) , Sprites.GetRects( Sprites.Grass ) ),
             new PaletteItem ( GameObject.StoneWall        , typeof( GenericTile ) , Sprites.GetRects( Sprites.StoneWall ) ),
             new PaletteItem ( GameObject.CrackedStoneWall , typeof( GenericTile ) , Sprites.GetRects( Sprites.CrackedStoneWall ) ),
             new PaletteItem ( GameObject.Poison           , typeof( Poison )      , Sprites.GetRects( Sprites.Poison ) ),
@@ -172,14 +173,14 @@ public class MapCreator {
 
     }
 
-    private WorldObject? getClickedMapItem( Vector2 vec ) {
+    private WorldObject? getClickedMapItem( Vector2 vec, bool ignoreZ ) {
 
         foreach( var item in map ) {
 
-            if( inside( vec, new Rectangle( item.getX(), item.getY(), item.getW(), item.getH() ) ) ) {
-                
-                // Console.WriteLine( item.sprite.rect.X  + " " + item.sprite.rect.Y + " " + item.sprite.rect.Width + " " + item.sprite.rect.Height );
-                
+            bool isInside = inside( vec, new Rectangle( item.getX(), item.getY(), item.getW(), item.getH() ) );
+
+            if( isInside &&( z == item.getZ() && !ignoreZ ) ) {
+            
                 return item;
 
             }
@@ -187,6 +188,41 @@ public class MapCreator {
         }
 
         return null;
+
+    }
+
+    private List<WorldObject> getClickedMapItemList( Vector2 vec, bool ignoreZ ) {
+
+        List<WorldObject> list = new();
+
+        foreach( var item in map ) {
+
+            bool isInside = inside( vec, new Rectangle( item.getX(), item.getY(), item.getW(), item.getH() ) );
+
+            if( isInside ) {
+
+                if( !ignoreZ ) {
+
+                    if( z == item.getZ() ) {
+                        
+                        list.Add( item );
+                        
+                        continue;
+
+                    }
+
+                    continue;
+                }
+
+                // Console.WriteLine( item.sprite.rect.X  + " " + item.sprite.rect.Y + " " + item.sprite.rect.Width + " " + item.sprite.rect.Height );
+                
+                list.Add( item );
+
+            }
+        
+        }
+
+        return list;
 
     }
 
@@ -198,9 +234,9 @@ public class MapCreator {
 
         } else {
 
-            if( selectedItem == null ) return;
+            if( selectedItem == null )  return;
 
-            WorldObject? obj = getClickedMapItem( getWorldClick( vec ) );
+            WorldObject? obj = getClickedMapItem( getWorldClick( vec ), false );
 
             if ( obj != null ) {
                 
@@ -209,8 +245,6 @@ public class MapCreator {
                 return;
             
             }
-            
-            WorldObject item = (WorldObject)Activator.CreateInstance( selectedItem!.classObject, game )!;
 
             Vector2 mouseWorld = getWorldClick( vec );
 
@@ -219,15 +253,26 @@ public class MapCreator {
             float x = MathF.Floor( mouseWorld.X / size ) * size;
             float y = MathF.Floor( mouseWorld.Y / size ) * size;
 
-            item.setXY( x, y );
-
-            if ( item.GetType() == typeof( GenericTile ) ) {
+            if ( typeof( GenericTile ).IsAssignableTo( selectedItem.classObject ) ) {
                 
-                GenericTile tile = (item as GenericTile)!;
+                GameObject gameObject = selectedItem!.gameObject;
+
+                GenericTile? tile = TileCreator.NewTile( gameObject, game );
+                    
+                if( tile == null ) return;
 
                 tile.sprite.setSprite( selectedItem.sprite );
 
+                tile.setZ( z ).setXY( x, y );
+
+                addToMap( tile );
+
+                return;
             }
+
+            WorldObject item = (WorldObject)Activator.CreateInstance( selectedItem!.classObject, game )!;
+
+            item.setZ( z ).setXY( x, y );
 
             addToMap( item );
 
@@ -236,7 +281,18 @@ public class MapCreator {
     }
 
     private void rightClick( Vector2 vec ) {
+
+        List<WorldObject> list = getClickedMapItemList(
+            getWorldClick( vec ),
+            Raylib.IsKeyDown( KeyboardKey.LeftShift )
+        );
+
+        foreach ( WorldObject item in list ) {
         
+            map.Remove( item );
+        
+        }
+
     }
 
     public void addToMap( WorldObject entity ) {
@@ -246,7 +302,6 @@ public class MapCreator {
         map.Sort( ( a, b ) => a.getZ().CompareTo( b.getZ() ) ); // map.OrderBy( e => e.getZ() ).ToList();
 
     }
-
 
     public void drawInterface( ref Camera2D cam, float delta, Texture2D spriteSheet ) {
 

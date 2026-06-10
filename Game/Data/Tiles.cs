@@ -10,7 +10,7 @@ public abstract class Tiles {
     public static TileDefinition MiddleGrass() {
 
         return new TileDefinition()
-        .setGameObjectID( GameObject.MiddleGrass )
+        .setGameObjectID( GameObject.Grass )
         .setZ( -1 )
         .setRenderable( true )
         .setSolid( false )
