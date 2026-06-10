@@ -1,6 +1,7 @@
 using Game.Core;
 using Game.Objects;
 using Game.Objects.Animation;
+using Game.Rendering;
 using Game.World.Entity;
 using Raylib_cs;
 
@@ -8,8 +9,8 @@ namespace Game.World.Item;
 
 
 public class GenericItem: WorldObject {
-    
-    public UniqueSprite sprite = new( 184, 34, 32, 32 );
+
+    public UniqueSprite sprite = new( 184, 34, 32, 32, 1, 0 );
 
     public GenericItem( Main game ): base( game ) {
 
@@ -36,8 +37,10 @@ public class GenericItem: WorldObject {
         
     }
 
-    protected GenericItem loadSpriteRect( Rectangle r ) {
-        sprite.rect = r; 
+    protected GenericItem loadSpriteFrame( SpriteFrame r ) {
+        sprite.rect = r.rect;
+        sprite.multiplyerW  = r.multiplyerW;
+        sprite.rotationX    = r.rotationX;
         return this;
     }
 

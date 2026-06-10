@@ -27,7 +27,7 @@ public class Poison: GenericItem {
 
             g.setCollisionTrigger( true );
 
-            g.loadSpriteRect( Sprites.Poison.icon );
+            g.loadSpriteFrame( Sprites.Poison.icon );
 
         });
 

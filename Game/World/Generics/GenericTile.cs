@@ -7,7 +7,7 @@ namespace Game.World.Tile;
 
 public class GenericTile : WorldObject {
     
-    public UniqueSprite sprite = new( 184, 1, 32, 32 );
+    public UniqueSprite sprite = new( 184, 1, 32, 32, 1, 0 );
     
     public GenericTile( Main game ) : base( game ) {
 
@@ -30,7 +30,7 @@ public class GenericTile : WorldObject {
 
     public override void render( Camera2D cam, float delta, Texture2D spriteSheet ) {
 
-       // Raylib.DrawRectangle( getIntX(), getIntY(), getIntW(), getIntH(), Color.Red );
+        // Raylib.DrawRectangle( getIntX(), getIntY(), getIntW(), getIntH(), Color.Red );
         sprite.render( this, spriteSheet );
 
     }

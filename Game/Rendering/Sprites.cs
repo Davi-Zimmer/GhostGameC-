@@ -1,48 +1,63 @@
 using System.CodeDom.Compiler;
 using System.Reflection;
+using Game.Objects.Basics;
 using Game.World.Entity;
 using Raylib_cs;
-
 namespace Game.Rendering;
 
+public struct SpriteFrame {
+    public Rectangle rect;
+    public int multiplyerW;
+    public int rotationX;
+
+    public SpriteFrame ( int x, int y, int w, int h, int multiplyerW, int rotationX ) {
+        rect = new Rectangle( x, y, w, h );
+        this.multiplyerW = multiplyerW;
+        this.rotationX = rotationX;
+    }
+
+}
+
 public class PlayerSprites {
-    public readonly Rectangle Down  = new( 0,   0, 27, 36 );
-    public readonly Rectangle Left  = new( 0,  37, 27, 36 );
-    public readonly Rectangle Right = new( 0,  75, 27, 36 );
-    public readonly Rectangle Up    = new( 0, 115, 27, 36 );
+    public readonly SpriteFrame Down  = new( 0,   0, 27, 36,  1, 0 );
+    public readonly SpriteFrame Left  = new( 0,  75, 27, 36, -1, 0 );
+    public readonly SpriteFrame Right = new( 0,  75, 27, 36,  1, 0 );
+    public readonly SpriteFrame Up    = new( 0, 115, 27, 36,  1, 0 );
 }
 
 public class SlimeSprites {
-    public Rectangle JumpRight = new( 1, 158, 48, 42 );
+    public SpriteFrame JumpRight = new( 1, 158, 48, 42,  1, 0 );
+    public SpriteFrame JumpLeft  = new( 1, 158, 48, 42, -1, 0 );
 
 }
 
 public class GrassSprites {
-    public Rectangle Middle = new( 151, 1, 32, 32 );
+    public SpriteFrame Middle = new( 151, 1, 32, 32, 1, 0 );
     
 }
 
 public class StoneWallSprites {
-    public Rectangle Middle = new( 184, 1, 32, 32 );
+    public SpriteFrame Middle = new( 184, 1, 32, 32, 1, 0 );
     
 }
 
 public class CrackedStoneWallSprites {
-    public Rectangle Middle = new( 217, 34, 32, 32 );
+    public SpriteFrame Middle = new( 217, 34, 32, 32, 1, 0 );
     
 }
 
 public class PoisonSprites {
     
-    public Rectangle icon = new( 151, 34, 32, 32 );
+    public SpriteFrame icon = new( 151, 34, 32, 32, 1, 0 );
  
 }
 
 public class EctoGunSprites {
     
-    public Rectangle icon = new( 151, 67, 32, 32 );
+    public SpriteFrame icon = new( 151, 67, 32, 32, 1, 0 );
  
 }
+
 
 
 public class Sprites {
@@ -60,9 +75,9 @@ public class Sprites {
     public static readonly EctoGunSprites EctoGun = new();
 
 
-    public static List<Rectangle> GetRects( object obj ) {
+    public static List<SpriteFrame> GetRects( object obj ) {
 
-        var resultado = new List<Rectangle>();
+        var resultado = new List<SpriteFrame>();
 
         var campos = obj.GetType().GetFields(
             BindingFlags.Instance |
@@ -72,9 +87,9 @@ public class Sprites {
 
         foreach( var campo in campos ) {
             
-            if (campo.FieldType == typeof(Rectangle)) {
+            if (campo.FieldType == typeof(SpriteFrame)) {
 
-                resultado.Add((Rectangle)campo.GetValue(obj)!);
+                resultado.Add((SpriteFrame)campo.GetValue(obj)!);
 
             }
 

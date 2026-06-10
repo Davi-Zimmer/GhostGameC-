@@ -1,10 +1,12 @@
 using Game.Core;
+using Game.Rendering;
 using Game.World.Tile;
 using Raylib_cs;
 
 namespace Game.Data;
 
 public class TileDefinition {
+    
     public float x = 0;
     public float y = 0;
     public float z = 0;
@@ -25,8 +27,7 @@ public class TileDefinition {
 
     public List< GameObject > collisionExeption = [];
 
-    public Rectangle uniqueSprite;
-
+    public SpriteFrame uniqueSprite;
 
     public TileDefinition setX( float f ){ x = f; return this; }
     public TileDefinition setY( float f ){ y = f; return this; }
@@ -48,7 +49,7 @@ public class TileDefinition {
 
     public TileDefinition setGameObjectID( GameObject o ) { gameObjectID = o; return this; }
     public TileDefinition setCollisionExeption( List<GameObject> l ) { collisionExeption = l; return this; }
-    public TileDefinition setUniqueSprite( Rectangle s ) { uniqueSprite = s; return this; }
+    public TileDefinition setUniqueSprite( SpriteFrame s ) { uniqueSprite = s; return this; }
 
 }
 
@@ -92,9 +93,9 @@ public class TileCreator {
 
         }
 
-        Rectangle r = def.uniqueSprite;
+        Rectangle r = def.uniqueSprite.rect;
 
-        tile.sprite = new( r.X, r.Y, r.Width, r.Height );
+        tile.sprite = new( r.X, r.Y, r.Width, r.Height, def.uniqueSprite.multiplyerW, def.uniqueSprite.rotationX );
 
         return tile;
 

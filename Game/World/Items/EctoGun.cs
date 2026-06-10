@@ -25,7 +25,7 @@ public class EctoGun: GenericItem {
 
             g.setCollisionTrigger( true );
 
-            g.loadSpriteRect( Sprites.EctoGun.icon );
+            g.loadSpriteFrame( Sprites.EctoGun.icon );
 
         });
 

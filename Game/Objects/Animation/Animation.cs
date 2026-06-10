@@ -2,6 +2,7 @@ namespace Game.Objects.Animation;
 
 using System.Numerics;
 using Game.Objects.Basics;
+using Game.Rendering;
 using Raylib_cs;
 using SpriteType = ( int x, int y, int w, int h, int frames, int multplyerW, int rotationX );
 
@@ -31,17 +32,19 @@ public class Animation {
     }
 
 
-    public void forSprites( Rectangle r, int frames, int frameDelay, string animationName, int multplyerW, int rotation ) {
+    public void forSprites( SpriteFrame s, int frames, int frameDelay, string animationName ) {
         
         sprites[ animationName ] = [];
+
+        Rectangle r = s.rect;
 
         for( int i = 0; i < frames; i++ ){
 
             sprites[ animationName ].Add((
                 (int)r.X + i * (int)r.Width + i * 2,
                 (int)r.Y, (int)r.Width, (int)r.Height, frameDelay,
-                multplyerW,
-                rotation
+                s.multiplyerW,
+                s.rotationX
             ));
 
         }
@@ -108,7 +111,7 @@ public class Animation {
 
         Rectangle rect = getFrameRectangle();
 
-        var vec = new Vector2( r.getW() / 2,r. getH() / 2 );
+        var vec = new Vector2( r.getW() / 2, r. getH() / 2 );
     
         Raylib.DrawTexturePro( 
             spriteSheet,
