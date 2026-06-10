@@ -106,7 +106,7 @@ public class TileCreator {
         switch( o ) {
             case GameObject.StoneWall         : return Tiles.StoneWall();
             case GameObject.CrackedStoneWall  : return Tiles.CrackedStoneWall();
-            case GameObject.Grass       : return Tiles.MiddleGrass();
+            case GameObject.Grass             : return Tiles.MiddleGrass();
 
             // case GameObject.TopLeftDirt       : return Tiles.TopLeftDirt();
             // case GameObject.TopDirt           : return Tiles.TopDirt();
