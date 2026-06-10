@@ -47,10 +47,10 @@ public class Player : GenericEntity {
 
         animation.createAnimation( [ "up", "down", "left", "right" ] );
 
-        animation.forSprites( Sprites.Player.Down , 4, 5, "down" ,  1 , 0 );
-        animation.forSprites( Sprites.Player.Right, 4, 5, "left" , -1 , 0 );
-        animation.forSprites( Sprites.Player.Right, 4, 5, "right",  1 , 0 );
-        animation.forSprites( Sprites.Player.Up   , 4, 5, "up"   ,  1 , 0 );
+        animation.forSprites( Sprites.Player.Down  , 4, 5, "down"  );
+        animation.forSprites( Sprites.Player.Left  , 4, 5, "left"  );
+        animation.forSprites( Sprites.Player.Right , 4, 5, "right" );
+        animation.forSprites( Sprites.Player.Up    , 4, 5, "up"    );
         
     }
 
@@ -92,9 +92,8 @@ public class Player : GenericEntity {
 
     }
 
-
     public int test = 0;
-    public override void render( Camera2D cam,  float delta, Texture2D spriteSheet ) {
+    public override void render( Camera2D cam, float delta, Texture2D spriteSheet ) {
 
         Raylib.DrawRectangle( (int)extractX(delta), (int)extractY(delta), getIntW(), getIntH(), Color.Blue );
         

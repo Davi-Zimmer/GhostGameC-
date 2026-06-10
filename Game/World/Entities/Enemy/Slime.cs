@@ -44,8 +44,8 @@ public class Slime: GenericEntity {
         
         animation.createAnimation( [ "jumpRight", "jumpLeft" ] );
 
-        animation.forSprites( Sprites.Slime.JumpRight, 3, 5, "jumpRight",  1, 0 );
-        animation.forSprites( Sprites.Slime.JumpRight, 3, 5, "jumpLeft" , -1, 0 );
+        animation.forSprites( Sprites.Slime.JumpRight, 3, 5, "jumpRight" );
+        animation.forSprites( Sprites.Slime.JumpLeft , 3, 5, "jumpLeft"  );
 
     }
 

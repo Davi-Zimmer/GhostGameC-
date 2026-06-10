@@ -13,9 +13,9 @@ namespace Game.Core;
 public class PaletteItem {
     public GameObject gameObject = GameObject.None;
     public Type classObject;
-    public List<Rectangle> previewSprites;
+    public List<SpriteFrame> previewSprites;
 
-    public PaletteItem( GameObject o, Type classObj, List<Rectangle> preview ) {
+    public PaletteItem( GameObject o, Type classObj, List<SpriteFrame> preview ) {
         gameObject     = o;
         classObject    = classObj;
         previewSprites = preview;
@@ -132,7 +132,7 @@ public class MapCreator {
 
                 list.Add( new OrganizedPeletteItem(
                     new Rectangle( posX, posY, size, size ),
-                    item.previewSprites[ x ],
+                    item.previewSprites[ x ].rect,
                     item.classObject,
                     item.gameObject
                 ));
