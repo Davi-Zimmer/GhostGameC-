@@ -32,7 +32,21 @@ public class SlimeSprites {
 }
 
 public class GrassSprites {
-    public SpriteFrame Middle = new( 151, 1, 32, 32, 1, 0 );
+    public SpriteFrame TopLeftDirtGrass = new( 251, 1, 21, 21, 1, 0 );
+    public SpriteFrame TopDirtGrass     = new( 273, 1, 21, 21, 1, 0 );
+    public SpriteFrame MiddleGrass      = new( 295, 1, 21, 21, 1, 0 );
+
+    public SpriteFrame TopLeftDirt = new( 251, 23, 21, 21, 1, 0 );
+    public SpriteFrame TopDirt     = new( 273, 23, 21, 21, 1, 0 );
+    public SpriteFrame MiddleDirt  = new( 295, 23, 21, 21, 1, 0 );
+
+    public SpriteFrame TopLeftDeepDirt = new( 251, 45, 21, 21, 1, 0 );
+    public SpriteFrame TopDeepDirt     = new( 273, 45, 21, 21, 1, 0 );
+    public SpriteFrame MiddleGrassShadow  = new( 295, 45, 21, 21, 1, 0 );
+
+    public SpriteFrame TopLefGrassShadow  = new( 251, 67, 21, 21, 1, 0 );
+    public SpriteFrame TopGrassShadow     = new( 273, 67, 21, 21, 1, 0 );
+    public SpriteFrame LeftGrassShadow    = new( 295, 65, 21, 21, 1, 0 );
     
 }
 

@@ -61,7 +61,7 @@ public class Main {
 
             for ( int y = 0; y < A; y++ ) {
                 
-                createTileInMap( GameObject.Grass, t => t.setXY( x * size, y * size ) );
+                createTileInMap( GameObject.MiddleGrass, t => t.setXY( x * size, y * size ) );
                 
             }
 
@@ -374,6 +374,11 @@ public enum GameObject {
     GenericEntity, GenericItem, GenericTile,
     Player, Slime,
     Poison, EctoGun,
-    Grass, StoneWall, CrackedStoneWall,
+    MiddleGrass,
+    // TopLeftDirtGrass, TopDirtGrass,
+    // TopLeftDirt, TopDirt, MiddleDirt, TopLeftDeepDirt, 
+    // TopDeepDirt, MiddleGrassShadow, TopLefGrassShadow, TopGrassShadow, LeftGrassShadow, 
+    
+    StoneWall, CrackedStoneWall,
 
 }

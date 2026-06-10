@@ -104,9 +104,20 @@ public class TileCreator {
     public static TileDefinition? Find( GameObject o ) {
 
         switch( o ) {
-            case GameObject.Grass            : return Tiles.Grass();
-            case GameObject.StoneWall        : return Tiles.StoneWall();
-            case GameObject.CrackedStoneWall : return Tiles.CrackedStoneWall();
+            case GameObject.StoneWall         : return Tiles.StoneWall();
+            case GameObject.CrackedStoneWall  : return Tiles.CrackedStoneWall();
+            case GameObject.MiddleGrass       : return Tiles.MiddleGrass();
+
+            // case GameObject.TopLeftDirt       : return Tiles.TopLeftDirt();
+            // case GameObject.TopDirt           : return Tiles.TopDirt();
+            // case GameObject.MiddleDirt        : return Tiles.MiddleDirt();
+            // case GameObject.TopLeftDeepDirt   : return Tiles.TopLeftDeepDirt();
+            // case GameObject.TopDeepDirt       : return Tiles.TopDeepDirt();
+            // case GameObject.MiddleGrassShadow : return Tiles.MiddleGrassShadow();
+            // case GameObject.TopLefGrassShadow : return Tiles.TopLefGrassShadow();
+            // case GameObject.TopGrassShadow    : return Tiles.TopGrassShadow();
+            // case GameObject.LeftGrassShadow   : return Tiles.LeftGrassShadow();
+
         }
     
         return null;

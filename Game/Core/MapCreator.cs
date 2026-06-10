@@ -25,13 +25,13 @@ public class PaletteItem {
 
 public class OrganizedPeletteItem {
     public Rectangle pos;
-    public Rectangle sprite;
+    public SpriteFrame sprite;
     public Type classObject;
     public GameObject gameObject;
 
     public OrganizedPeletteItem(
         Rectangle pos,
-        Rectangle sprite,
+        SpriteFrame sprite,
         Type classObject,
         GameObject gameObject
     ) {
@@ -72,47 +72,13 @@ public class MapCreator {
 
         List<PaletteItem> items = new() {
 
-            new PaletteItem (
-                GameObject.Player,
-                typeof( Player ),
-                Sprites.GetRects( Sprites.Player )
-            ),
-
-            new PaletteItem (
-                GameObject.Slime,
-                typeof( Slime ),
-                Sprites.GetRects( Sprites.Slime )
-            ),
-
-            new PaletteItem (
-                GameObject.Grass,
-                typeof( GenericTile ),
-                Sprites.GetRects( Sprites.Grass )
-            ),
-
-            new PaletteItem (
-                GameObject.StoneWall,
-                typeof( GenericTile ),
-                Sprites.GetRects( Sprites.StoneWall )
-            ),
-
-            new PaletteItem (
-                GameObject.CrackedStoneWall,
-                typeof( GenericTile ),
-                Sprites.GetRects( Sprites.CrackedStoneWall )
-            ),
-
-            new PaletteItem (
-                GameObject.Poison,
-                typeof( Poison ),
-                Sprites.GetRects( Sprites.Poison )
-            ),
-
-            new PaletteItem (
-                GameObject.EctoGun,
-                typeof( EctoGun ),
-                Sprites.GetRects( Sprites.EctoGun )
-            ),
+            new PaletteItem ( GameObject.Player           , typeof( Player )      , Sprites.GetRects( Sprites.Player ) ),
+            new PaletteItem ( GameObject.Slime            , typeof( Slime )       , Sprites.GetRects( Sprites.Slime ) ),
+            new PaletteItem ( GameObject.MiddleGrass      , typeof( GenericTile ) , Sprites.GetRects( Sprites.Grass ) ),
+            new PaletteItem ( GameObject.StoneWall        , typeof( GenericTile ) , Sprites.GetRects( Sprites.StoneWall ) ),
+            new PaletteItem ( GameObject.CrackedStoneWall , typeof( GenericTile ) , Sprites.GetRects( Sprites.CrackedStoneWall ) ),
+            new PaletteItem ( GameObject.Poison           , typeof( Poison )      , Sprites.GetRects( Sprites.Poison ) ),
+            new PaletteItem ( GameObject.EctoGun          , typeof( EctoGun )     , Sprites.GetRects( Sprites.EctoGun ) ),
             
         };
         
@@ -132,7 +98,7 @@ public class MapCreator {
 
                 list.Add( new OrganizedPeletteItem(
                     new Rectangle( posX, posY, size, size ),
-                    item.previewSprites[ x ].rect,
+                    item.previewSprites[ x ],
                     item.classObject,
                     item.gameObject
                 ));
@@ -163,8 +129,8 @@ public class MapCreator {
         if( Raylib.IsKeyPressed( KeyboardKey.Down ) ) z--; else
         if( Raylib.IsKeyPressed( KeyboardKey.Up   ) ) z++;
 
-        if( Raylib.IsMouseButtonPressed( MouseButton.Left ) ) leftClick( Raylib.GetMousePosition() );
-
+        if( Raylib.IsMouseButtonPressed( MouseButton.Left  ) ) leftClick( Raylib.GetMousePosition() );
+        if( Raylib.IsMouseButtonPressed( MouseButton.Right ) ) rightClick( Raylib.GetMousePosition() );
 
     }
 
@@ -177,24 +143,110 @@ public class MapCreator {
         );
     }
 
-    private void leftClick( Vector2 vec ) {
+    public Vector2 getWorldClick( Vector2 vec ) {
+        
+        Vector2 mouseWorld = Raylib.GetScreenToWorld2D(
+            vec,
+            game.getCamera()
+        );
+
+        return mouseWorld;
+        
+    }
+
+    private OrganizedPeletteItem? getClickedPalleteItem( Vector2 vec ) {
 
         foreach( var item in organizedItems ) {
 
             if( inside( vec, item.pos ) ) {
                 
-                selectedItem = item;
+                // Console.WriteLine( item.sprite.rect.X  + " " + item.sprite.rect.Y + " " + item.sprite.rect.Width + " " + item.sprite.rect.Height );
                 
-                if( selectedItem != null ) Console.WriteLine( selectedItem.gameObject );
-
-                return;
+                return item;
 
             }
         
         }
 
+        return null;
 
     }
+
+    private WorldObject? getClickedMapItem( Vector2 vec ) {
+
+        foreach( var item in map ) {
+
+            if( inside( vec, new Rectangle( item.getX(), item.getY(), item.getW(), item.getH() ) ) ) {
+                
+                // Console.WriteLine( item.sprite.rect.X  + " " + item.sprite.rect.Y + " " + item.sprite.rect.Width + " " + item.sprite.rect.Height );
+                
+                return item;
+
+            }
+        
+        }
+
+        return null;
+
+    }
+
+    private void leftClick( Vector2 vec ) {
+
+        if ( itemsInterface ) {
+
+            selectedItem = getClickedPalleteItem( vec );
+
+        } else {
+
+            if( selectedItem == null ) return;
+
+            WorldObject? obj = getClickedMapItem( getWorldClick( vec ) );
+
+            if ( obj != null ) {
+                
+                Console.WriteLine("Ja tem coisa ae " + obj.getGameObjectID() );
+                
+                return;
+            
+            }
+            
+            WorldObject item = (WorldObject)Activator.CreateInstance( selectedItem!.classObject, game )!;
+
+            Vector2 mouseWorld = getWorldClick( vec );
+
+            float size = game.TileSize;
+                
+            float x = MathF.Floor( mouseWorld.X / size ) * size;
+            float y = MathF.Floor( mouseWorld.Y / size ) * size;
+
+            item.setXY( x, y );
+
+            if ( item.GetType() == typeof( GenericTile ) ) {
+                
+                GenericTile tile = (item as GenericTile)!;
+
+                tile.sprite.setSprite( selectedItem.sprite );
+
+            }
+
+            addToMap( item );
+
+        }
+
+    }
+
+    private void rightClick( Vector2 vec ) {
+        
+    }
+
+    public void addToMap( WorldObject entity ) {
+
+        map.Add( entity );
+
+        map.Sort( ( a, b ) => a.getZ().CompareTo( b.getZ() ) ); // map.OrderBy( e => e.getZ() ).ToList();
+
+    }
+
 
     public void drawInterface( ref Camera2D cam, float delta, Texture2D spriteSheet ) {
 
@@ -204,14 +256,21 @@ public class MapCreator {
         
             Raylib.DrawRectangle( (int)item.pos.X, (int)item.pos.Y, (int)item.pos.Width, (int)item.pos.Height, Color.Blue );
 
-            var vec = new Vector2( 0, 0 );
+            var vec = new Vector2( item.pos.Width / 2, item.pos.Height / 2 );
         
+            Rectangle r = item.sprite.rect;
+            r.Width *= item.sprite.multiplyerW;
             Raylib.DrawTexturePro( 
                 spriteSheet,
-                item.sprite,
-                item.pos,
+                r,
+                new Rectangle( 
+                    item.pos.X     + item.pos.Width  / 2,
+                    item.pos.Y     + item.pos.Height / 2,
+                    item.pos.Width,
+                    item.pos.Height
+                ),
                 vec,
-                0,
+                item.sprite.rotationX,
                 Color.White
             );
 
@@ -237,18 +296,39 @@ public class MapCreator {
 
         Raylib.DrawRectangle( 0, 0, 50, 50, Color.Red );
 
-            foreach( var t in map ) {
-                
-                if( !game.outsideCamera( t, game.TileSize * 2 ) ) continue;
-    
-                t.render( cam, delta, spriteSheet );
+        foreach( var t in map ) {
+            
+            if( !game.outsideCamera( t, game.TileSize * 2 ) ) continue;
 
-            }
+            t.render( cam, delta, spriteSheet );
 
+        }
 
         Raylib.EndMode2D();
 
         Raylib.DrawText( "z: " + z,  10, 10, 20, Color.White );
+
+        if( selectedItem != null ) {
+            
+            var item = selectedItem;
+
+            var vec = new Vector2( item.pos.Width / 2, item.pos.Height / 2 );
+        
+            Rectangle r = item.sprite.rect;
+            r.Width *= item.sprite.multiplyerW;
+
+            int size = 50;
+
+            Raylib.DrawTexturePro( 
+                spriteSheet,
+                r,
+                new Rectangle( game.getInnerWidth() - size - 10, size, size, size ),
+                vec,
+                item.sprite.rotationX,
+                Color.White
+            );
+
+        }
 
 
     }

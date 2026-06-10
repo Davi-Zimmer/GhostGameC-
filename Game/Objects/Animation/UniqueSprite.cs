@@ -2,6 +2,7 @@ namespace Game.Objects.Animation;
 
 using System.Numerics;
 using Game.Objects.Basics;
+using Game.Rendering;
 using Game.World.Tile;
 using Raylib_cs;
 public class UniqueSprite {
@@ -9,6 +10,7 @@ public class UniqueSprite {
     public Rectangle rect { get; set; }
     public int rotationX;
     public int multiplyerW;
+
     public UniqueSprite( float x, float y, float w, float h, int multiplyerW, int rotationX ) {
         
         rect = new Rectangle( x, y, w, h );
@@ -31,6 +33,13 @@ public class UniqueSprite {
             Color.White
         );
 
+    }
+
+    public UniqueSprite setSprite( SpriteFrame f ) {
+        rect        = f.rect;
+        multiplyerW = f.multiplyerW;
+        rotationX   = f.rotationX;
+        return this;
     }
 
 }
