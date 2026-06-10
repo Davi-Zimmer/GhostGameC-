@@ -70,8 +70,8 @@ public class Main {
 
     public void setup() {
 
-        innerWidth  = Raylib.GetScreenWidth();
-        innerHeight = Raylib.GetScreenHeight();
+
+        resizeWindow();
 
         string path = Directory.GetCurrentDirectory() + "/Assets/placeholder.png";
 
@@ -245,15 +245,22 @@ public class Main {
 
     public bool outsideCamera( Rect r, int margin ) {
 
-        float camX = cam.Target.X * cam.Zoom - cam.Offset.X;
-        float camY = cam.Target.Y * cam.Zoom - cam.Offset.Y;
-
+        Vector2 topLeft     = Raylib.GetScreenToWorld2D( new Vector2( 0, 0 ), cam );
+        Vector2 bottomRight = Raylib.GetScreenToWorld2D( new Vector2 ( innerWidth, innerHeight ), cam );
+ 
         return (
-            camX - margin < r.getX() + r.getW() &&
-            camY - margin < r.getY() + r.getH() &&
-            camX + margin + innerWidth  > r.getX() && 
-            camY + margin + innerHeight > r.getY() 
+            r.getX()            < ( bottomRight.X + margin * 2 ) &&
+            r.getX() + r.getW() > ( topLeft.X     - margin ) &&
+            r.getY()            < ( bottomRight.Y + margin * 2 ) &&
+            r.getY() + r.getH() > ( topLeft.Y     - margin )
         );
+
+    }
+
+    public void resizeWindow() {
+        innerWidth  = Raylib.GetScreenWidth();
+        innerHeight = Raylib.GetScreenHeight();
+        cam.Offset  = new Vector2( innerWidth / 2 , innerHeight / 2 );
 
     }
 
@@ -340,6 +347,7 @@ public class Main {
 
         // </Interface>
 
+        Raylib.DrawFPS( 200, 20 );
         
     }
 
