@@ -42,8 +42,6 @@ public class Main {
 
         addToMap( p );
 
-        configCamera( p );
-
         TileCreator c = new();
 
         createTileInMap( GameObject.StoneWall       , t => t.setXY( 500f, 200f ) );
@@ -66,18 +64,22 @@ public class Main {
             }
 
         }
+
     
     }
 
     public void setup() {
 
-        innerWidth  = Raylib.GetScreenWidth();
-        innerHeight = Raylib.GetScreenHeight();
+
+        resizeWindow();
 
         string path = Directory.GetCurrentDirectory() + "/Assets/placeholder.png";
 
         spritesheet = Raylib.LoadTexture( path );
 
+        Raylib.SetTextureFilter( spritesheet, TextureFilter.Point );
+        
+        configCamera();
     }
 
     public void finish() {
@@ -86,14 +88,11 @@ public class Main {
 
     }
 
-    public void configCamera( Player p ) {
-        
-        cam.Target = new Vector2( p.getX(), p.getY() ); 
-    
-        cam.Target   = new Vector2( p.getX() + 20.0f, p.getY() + 20.0f );
-        cam.Offset   = new Vector2( innerWidth / 2f, innerHeight / 2f );
+    public void configCamera() {
+   
+        cam.Offset   = new Vector2( innerWidth / 2 , innerHeight / 2 );
         cam.Rotation = 0.0f;
-        cam.Zoom     = 1.0f;
+        cam.Zoom     = 1.2f;
 
     }
 
@@ -220,11 +219,11 @@ public class Main {
     }
 
     private double getTargetX( float x, Rect targ ) { 
-        return ( x + targ.getW() / 2 ) - innerWidth / 2;
+        return x + targ.getW() / 2;
     }
 
     private double getTargetY( float y, Rect targ ) {
-        return ( y + targ.getH() / 2 ) - innerHeight / 2;
+        return y + targ.getH() / 2;
     }
 
     private void cameraFollow( float delta ) {
@@ -239,18 +238,29 @@ public class Main {
         float x = (float)getTargetX( xx, cameraTarget );
         float y = (float)getTargetY( yy, cameraTarget );
 
-        cam.Target.X = lerp( cam.Target.X, x, .3f );
-        cam.Target.Y = lerp( cam.Target.Y, y, .3f );
+        cam.Target.X = (int)lerp( cam.Target.X, x, .3f );
+        cam.Target.Y = (int)lerp( cam.Target.Y, y, .3f );
 
     }
 
     public bool outsideCamera( Rect r, int margin ) {
+
+        Vector2 topLeft     = Raylib.GetScreenToWorld2D( new Vector2( 0, 0 ), cam );
+        Vector2 bottomRight = Raylib.GetScreenToWorld2D( new Vector2 ( innerWidth, innerHeight ), cam );
+ 
         return (
-            cam.Target.X - margin < r.getX() + r.getW() &&
-            cam.Target.Y - margin < r.getY() + r.getH() &&
-            cam.Target.X + margin + innerWidth  > r.getX() && 
-            cam.Target.Y + margin + innerHeight > r.getY() 
+            r.getX()            < ( bottomRight.X + margin * 2 ) &&
+            r.getX() + r.getW() > ( topLeft.X     - margin ) &&
+            r.getY()            < ( bottomRight.Y + margin * 2 ) &&
+            r.getY() + r.getH() > ( topLeft.Y     - margin )
         );
+
+    }
+
+    public void resizeWindow() {
+        innerWidth  = Raylib.GetScreenWidth();
+        innerHeight = Raylib.GetScreenHeight();
+        cam.Offset  = new Vector2( innerWidth / 2 , innerHeight / 2 );
 
     }
 
@@ -337,6 +347,7 @@ public class Main {
 
         // </Interface>
 
+        Raylib.DrawFPS( 200, 20 );
         
     }
 

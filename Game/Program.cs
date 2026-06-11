@@ -31,6 +31,10 @@ public class Program {
 
         game.update( delta );
 
+        if( Raylib.IsWindowResized() ) {
+            game.resizeWindow();
+        }
+
     }
 
     public void end() {
