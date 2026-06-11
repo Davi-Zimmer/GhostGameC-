@@ -7,7 +7,6 @@ using Raylib_cs;
 
 namespace Game.World.Item;
 
-
 public class Poison: GenericItem {
     
     public Poison( Main game ): base( game ) {
@@ -45,7 +44,7 @@ public class Poison: GenericItem {
             
             Player targ = ( target as Player )!;
 
-            targ.setLife( 100 );
+            targ.getInvetory().pickItem( this );
 
             return true;
 

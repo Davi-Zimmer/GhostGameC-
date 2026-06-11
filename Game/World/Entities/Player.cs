@@ -77,7 +77,11 @@ public class Player : GenericEntity {
 
         if( Raylib.IsKeyPressed( KeyboardKey.Tab ) ) inventory.toggle();
 
-        if( Raylib.IsMouseButtonPressed( MouseButton.Left ) ) inventory.useSelectedItem();
+        if( Raylib.IsMouseButtonPressed( MouseButton.Left ) )  inventory.useItem( HUDSlot.Weapon1 );
+        if( Raylib.IsMouseButtonPressed( MouseButton.Right ) ) inventory.useItem( HUDSlot.Weapon2 );
+        if( Raylib.IsKeyReleased( KeyboardKey.One   ) ) inventory.useItem( HUDSlot.First  );
+        if( Raylib.IsKeyReleased( KeyboardKey.Two   ) ) inventory.useItem( HUDSlot.Second );
+        if( Raylib.IsKeyReleased( KeyboardKey.Three ) ) inventory.useItem( HUDSlot.Third  );
 
         getPhysics().getOrientation().setX( x ).setY( y );
     }
