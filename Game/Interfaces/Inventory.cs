@@ -1,15 +1,18 @@
+using System.ComponentModel.Design;
 using System.Numerics;
 using Game.Core;
 using Game.Data;
+using Game.Objects.Animation;
 using Game.Objects.Basics;
 using Game.Rendering;
 using Game.World.Item;
+using Game.World.Tile;
 using Raylib_cs;
 
 
 namespace Game.Interface;
 
-using InventoryObject = ( bool hasItem, SpriteFrame sprite, Rectangle rect );
+using InventoryObject = ( bool hasItem, SpriteFrame sprite, Rectangle rect, GameObject gameObject );
 
 public enum HUDSlot {
     Second,
@@ -35,12 +38,12 @@ public class Inventory {
         GameObject.Poison
     ];
 
-    private Dictionary< HUDSlot, GenericItem?> hudItems = new() {
-        [ HUDSlot.Weapon1 ] = null,
-        [ HUDSlot.Weapon2 ] = null,
+    private Dictionary< HUDSlot, GenericItem? > hudItems = new() {
         [ HUDSlot.First   ] = null,
         [ HUDSlot.Second  ] = null,
-        [ HUDSlot.Third   ] = null
+        [ HUDSlot.Third   ] = null,
+        [ HUDSlot.Weapon1 ] = null,
+        [ HUDSlot.Weapon2 ] = null
     };
 
     private List<InventoryObject> allItems = new();
@@ -65,6 +68,20 @@ public class Inventory {
 
         if( Raylib.IsKeyPressed( KeyboardKey.A ) ) previousItem();
         if( Raylib.IsKeyPressed( KeyboardKey.D ) ) nextItem();
+
+        if( Raylib.IsMouseButtonPressed( MouseButton.Left  ) ) moveSelectedItemToSlot( HUDSlot.Weapon1 );
+        if( Raylib.IsMouseButtonPressed( MouseButton.Right ) ) moveSelectedItemToSlot( HUDSlot.Weapon2 );
+        if( Raylib.IsKeyReleased( KeyboardKey.One   ) )        moveSelectedItemToSlot( HUDSlot.First  );
+        if( Raylib.IsKeyReleased( KeyboardKey.Two   ) )        moveSelectedItemToSlot( HUDSlot.Second );
+        if( Raylib.IsKeyReleased( KeyboardKey.Three ) )        moveSelectedItemToSlot( HUDSlot.Third  );
+
+    }
+
+    private void moveSelectedItemToSlot( HUDSlot slot ) {
+        
+        InventoryObject selected = allItems[ selectedItem ];
+
+        selectItem( selected.gameObject, slot );
 
     }
 
@@ -98,7 +115,8 @@ public class Inventory {
                             100  + s.rect.Height / 2,
                             50,
                             50
-                        )
+                        ),
+                        gameObject = obj.gameObject
                     });
 
                     x++;           
@@ -153,7 +171,61 @@ public class Inventory {
 
         }
 
+        renderHUDSlots( spriteSheet );
+        
+    }
 
+    public delegate void hudSlotsCallback( Rectangle r );
+
+    public void renderHUDSlots( Texture2D spriteSheet ) {
+
+        float slotWidth    =  game.getInnerWidth () * .03f;
+        float slotHeight   =  game.getInnerWidth()  * .04f;
+        int gap = 20;
+   
+        float offsetX = 10;
+        float offsetY = 10;
+
+        int i = 0;
+
+        foreach( var item in hudItems ) {
+
+            float x =  i * slotWidth + 10 * i;
+
+            if( i >= 3 ) x += gap;
+
+            Rectangle r = new( (int)(x + offsetX), (int)(game.getInnerHeight() - slotHeight - offsetY), (int)slotWidth, (int)slotHeight );
+
+            Raylib.DrawRectangle( (int)r.X, (int)r.Y, (int)r.Width, (int)r.Height, Color.Red );
+            
+            i++;
+            
+            if(  item.Value == null ) continue;
+            
+            GenericItem gItem = item.Value;
+
+            UniqueSprite s = gItem.sprite;
+
+            var vec = new Vector2( s.rect.Width / 2, s.rect.Height / 2 );
+
+            Rectangle r2 = s.rect;
+            r.Width *= s.multiplyerW;
+
+            Raylib.DrawTexturePro( 
+                spriteSheet,
+                r2,
+                new Rectangle(
+                    r.X + r2.Width  / 2,
+                    r.Y + r2.Height / 2,
+                    r.Width,
+                    r.Height
+                ),
+                vec,
+                s.rotationX,
+                Color.White
+            );
+
+        }
     }
 
     public int gameObjetToItemID( GameObject gameObject ) {
@@ -184,7 +256,28 @@ public class Inventory {
 
         if( !hasItem( gameObject ) ) return;
         
-        hudItems[ slot ] = getItem( gameObject );
+        var item = getItem( gameObject );
+
+        foreach( var hudItem in hudItems ) {
+          
+            if( hudItem.Value == null ) continue;
+
+            if( hudItem.Value.getGameObjectID() == gameObject ){
+                
+                HUDSlot oldSlot = hudItem.Key;
+
+                var destinationItem = hudItems[slot];
+
+                hudItems[slot] = item;
+
+                hudItems[oldSlot] = destinationItem;
+
+                return;
+            }
+
+        }
+
+        hudItems[ slot ] = item;
 
     }
 

@@ -59,5 +59,4 @@ public class WorldObject: Rect {
     public WorldObject setCollisionTrigger( bool b ){ useCollisionTrigger = b; return this; }
     public WorldObject setRotationX( int r ) { rotationX = r; return this; }
 
-
 }

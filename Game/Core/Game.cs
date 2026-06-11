@@ -264,7 +264,7 @@ public class Main {
 
     }
 
-    private void renderInterface() {
+    private void renderInterface( Texture2D spriteSheet ) {
 
         {
             int width = 100;
@@ -279,6 +279,7 @@ public class Main {
         }
 
         {
+            /*
             int sizeX = 20;
             int sizeY = 30;
 
@@ -291,6 +292,9 @@ public class Main {
                 Raylib.DrawRectangle( border + x * sizeX + gap * x, (int)y - sizeY - border, sizeX, sizeY, new Color( 255, 0, 100, .2f ) );
 
             }
+            */
+
+            player.getInvetory().renderHUDSlots( spritesheet );
 
         }
 
@@ -343,7 +347,7 @@ public class Main {
 
         // <Interface>
 
-            renderInterface();
+            renderInterface( spritesheet );
 
         // </Interface>
 

@@ -24,7 +24,7 @@ public class Player : GenericEntity {
             .setW( 27 )
             .setH( 36 )
             .setZ( 10 )
-            .setXY( 0, 0 );
+            .setXY( 500, 200 );
 
             p.getCollidable()
             .setCanOverlapOthers( true )
@@ -104,7 +104,7 @@ public class Player : GenericEntity {
         Raylib.DrawRectangle( getIntX(), getIntY(), getIntW(), getIntH(), Color.Purple );
         
         animation.render( this, spriteSheet );
-    
+
     }
 
     //--------------------------------- Getters ---------------------------------\\ 
