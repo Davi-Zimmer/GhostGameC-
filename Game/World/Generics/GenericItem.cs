@@ -37,6 +37,8 @@ public class GenericItem: WorldObject {
         
     }
 
+    private byte itemDamage = 0;
+
     protected GenericItem loadSpriteFrame( SpriteFrame r ) {
         sprite.rect = r.rect;
         sprite.multiplyerW  = r.multiplyerW;
@@ -56,7 +58,7 @@ public class GenericItem: WorldObject {
             
             Player targ = (target as Player)!; 
 
-            targ.getInvetory().addItem( this );
+            targ.getInvetory().pickItem( this );
 
             return true;
 
@@ -65,5 +67,9 @@ public class GenericItem: WorldObject {
         return false;
 
     }
+
+
+    public byte getItemDamage() { return itemDamage; }
+    public GenericItem setItemDamage( byte i ) { itemDamage = i; return this; }
 
 }

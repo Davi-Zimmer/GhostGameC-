@@ -12,19 +12,6 @@ using Raylib_cs;
 namespace Game.Core;
 
 
-public class PaletteItem {
-    public GameObject gameObject = GameObject.None;
-    public Type classObject;
-    public List<SpriteFrame> previewSprites;
-
-    public PaletteItem( GameObject o, Type classObj, List<SpriteFrame> preview ) {
-        gameObject     = o;
-        classObject    = classObj;
-        previewSprites = preview;
-    }
-
-}
-
 public class OrganizedPeletteItem {
     public Rectangle pos;
     public SpriteFrame sprite;
@@ -71,26 +58,14 @@ public class MapCreator {
 
     private List<OrganizedPeletteItem> organizeItems() {
 
-        List<PaletteItem> items = new() {
-
-            new PaletteItem ( GameObject.Player           , typeof( Player )      , Sprites.GetRects( Sprites.Player ) ),
-            new PaletteItem ( GameObject.Slime            , typeof( Slime )       , Sprites.GetRects( Sprites.Slime ) ),
-            new PaletteItem ( GameObject.Grass            , typeof( GenericTile ) , Sprites.GetRects( Sprites.Grass ) ),
-            new PaletteItem ( GameObject.StoneWall        , typeof( GenericTile ) , Sprites.GetRects( Sprites.StoneWall ) ),
-            new PaletteItem ( GameObject.CrackedStoneWall , typeof( GenericTile ) , Sprites.GetRects( Sprites.CrackedStoneWall ) ),
-            new PaletteItem ( GameObject.Poison           , typeof( Poison )      , Sprites.GetRects( Sprites.Poison ) ),
-            new PaletteItem ( GameObject.EctoGun          , typeof( EctoGun )     , Sprites.GetRects( Sprites.EctoGun ) ),
-            
-        };
-        
         List<OrganizedPeletteItem> list = [];
 
         int size = 50;
         int space = 10;
 
-        for ( int index = 0; index < items.Count; index++ ) {
+        for ( int index = 0; index < AllGameObjectsPalette.items.Count; index++ ) {
             
-            PaletteItem item = items[ index ];
+            PaletteItem item = AllGameObjectsPalette.items[ index ];
             
             for( int x = 0; x < item.previewSprites.Count; x++ ) {
 

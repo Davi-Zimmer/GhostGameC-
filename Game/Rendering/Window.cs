@@ -23,7 +23,6 @@ public class Window {
         Raylib.SetConfigFlags( ConfigFlags.ResizableWindow );
         Raylib.InitWindow( 800, 450, "Jogo Irado" );
         Raylib.SetTargetFPS( 60 );
-
     }
 
     private void startLoop( Loop loop, Func end ) {
