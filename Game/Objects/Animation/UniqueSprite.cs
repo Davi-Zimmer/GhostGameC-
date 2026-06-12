@@ -22,12 +22,17 @@ public class UniqueSprite {
 
     public void render( WorldObject r, Texture2D spriteSheet ) {
         
-        var vec = new Vector2( rect.Width / 2, rect.Height / 2 );
+        var vec = new Vector2( r.getW() / 2, r.getH() / 2 );
     
-        Raylib.DrawTexturePro( 
+        Raylib.DrawTexturePro(
             spriteSheet,
             rect,
-            new Rectangle( r.getX() + rect.Width / 2, r.getY() + rect.Height / 2, r.getW() * multiplyerW, r.getH() ),
+            new Rectangle( 
+                r.getX()  + r.getW() / 2,
+                r.getY() + r.getH() / 2 ,
+                r.getW() * multiplyerW,
+                r.getH()
+            ),
             vec,
             rotationX,
             Color.White

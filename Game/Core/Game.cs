@@ -382,6 +382,46 @@ public class Main {
 
     public Camera2D getCamera() { return cam; }
 
+    public static Dictionary< byte, GameObject > AllGameObjects = new(){
+        [   0  ]  = GameObject.None,
+        [   1  ]  = GameObject.GenericTile,
+        [   2  ]  = GameObject.CrackedStoneWall,
+        [   3  ]  = GameObject.StoneWall,
+        [   4  ]  = GameObject.Grass,
+        [   5  ]  = GameObject.GenericEntity,
+        [   6  ]  = GameObject.EctoGun,
+        [   7  ]  = GameObject.Player,
+        [   8  ]  = GameObject.GenericItem,
+        [   9  ]  = GameObject.Slime,
+        [  10  ]  = GameObject.Poison
+
+    };
+
+    public static byte GameObjectToByte( GameObject gameObject ) {
+
+        foreach( var item in AllGameObjects ) {
+            
+            if( item.Value == gameObject ) return item.Key;
+
+        }
+
+        return 0;
+
+    }
+
+    public static GameObject ByteToGameObject( byte b ) {
+
+        foreach( var item in AllGameObjects ) {
+            
+            if( item.Key == b ) return item.Value;
+
+        }
+
+        return GameObject.None;
+
+    }
+
+
 }
 
 public enum GameObject {

@@ -101,7 +101,7 @@ public class Inventory {
 
         foreach( var id in gameObjectItemIDs ) {
             
-            foreach ( var obj in AllGameObjectsPalette.items ) {
+            foreach ( var obj in AllGameObjectsPalette.Items ) {
 
                 if( obj.gameObject == id ) {
 
@@ -332,7 +332,7 @@ public class Inventory {
 
         if( !hasItem( gameObject ) ) return null;
 
-        foreach ( var obj in AllGameObjectsPalette.items ) {
+        foreach ( var obj in AllGameObjectsPalette.Items ) {
             
             if( obj.gameObject == gameObject ) {
 

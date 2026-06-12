@@ -24,7 +24,7 @@ public class PaletteItem {
 
 public class AllGameObjectsPalette {
     
-    public static List<PaletteItem> items = new() {
+    public static List<PaletteItem> Items = new() {
 
         new PaletteItem ( GameObject.Player           , typeof( Player )      , Sprites.GetRects( Sprites.Player ) ),
         new PaletteItem ( GameObject.Slime            , typeof( Slime )       , Sprites.GetRects( Sprites.Slime ) ),
@@ -35,5 +35,16 @@ public class AllGameObjectsPalette {
         new PaletteItem ( GameObject.EctoGun          , typeof( EctoGun )     , Sprites.GetRects( Sprites.EctoGun ) ),
         
     };
+
+    public static PaletteItem? FindByGameObject( GameObject gameObject ) {
+        
+        foreach ( var item in Items ) {
+        
+            if( item.gameObject == gameObject ) return item; 
+        
+        }
+
+        return null;
+    }
 
 }

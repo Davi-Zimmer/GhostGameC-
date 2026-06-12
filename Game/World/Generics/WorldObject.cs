@@ -7,6 +7,7 @@ namespace Game.Objects;
 public class WorldObject: Rect {
 
     GameObject gameObjectID = GameObject.None;
+    private int spriteIndex; 
 
     private bool renderable = true;
     private Physics? physics = null;
@@ -48,6 +49,7 @@ public class WorldObject: Rect {
     public Collidable getCollidable() { return collidable; }
     public bool getCollisionTrigger(){ return useCollisionTrigger; }
     public int getRotationX() { return rotationX; }
+    public int getSpriteIndex() { return spriteIndex; }
 
     //--------------------------------- Setters ---------------------------------\\ 
     public WorldObject setGameObjectID( GameObject id ) { gameObjectID = id; return this;  }
@@ -58,5 +60,7 @@ public class WorldObject: Rect {
     public WorldObject addCollision() { collidable = new Collidable(); return this; }
     public WorldObject setCollisionTrigger( bool b ){ useCollisionTrigger = b; return this; }
     public WorldObject setRotationX( int r ) { rotationX = r; return this; }
+
+    public WorldObject setSpriteIndex( int i ) { spriteIndex = i; return this; }
 
 }
