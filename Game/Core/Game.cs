@@ -421,6 +421,25 @@ public class Main {
 
     }
 
+    public void clearMap() {
+        map.Clear();
+    }
+
+    public void setMap( List<WorldObject> newMap ) {
+        map.Clear();
+        
+        foreach( WorldObject item in newMap ) {
+            
+            addToMap( item );
+
+            if( item is Player ) {
+                player = (item as Player)!;
+                cameraTarget = player;
+            }
+
+        }
+
+    }
 
 }
 
