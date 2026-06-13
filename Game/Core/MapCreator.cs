@@ -14,79 +14,81 @@ using Raylib_cs;
 namespace Game.Core;
 
 
-using RawTileData   = ( GameObject gameObject, int x, int y, int z, int spriteIndex, int rotationX, int multiplyerW );
-using RawEntityData = ( GameObject gameObject, int x, int y, int z, int spriteIndex, int life );
-using RawItemData   = ( GameObject gameObject, int x, int y, int z, int spriteIndex, int itemDamaged );
+using RawTileData   = ( GameObject gameObject, int z, int spriteIndex, int rotationX, int multiplyerW );
+using RawEntityData = ( GameObject gameObject, int z, int spriteIndex, int life );
+using RawItemData   = ( GameObject gameObject, int z, int spriteIndex, int itemDamaged );
 
+using RawData = ( ushort x, ushort y, byte[] bytes );
 
 public class GameDataConverter {
 
-    public static byte[] ToBytes( WorldObject obj ) {
+    public static RawData? ToBytes( WorldObject obj ) {
 
-        if( obj is GenericTile   ) return TileToBytes   ( ( obj as GenericTile   )! );
-        if( obj is GenericItem   ) return ItemToBytes   ( ( obj as GenericItem   )! );
-        if( obj is GenericEntity ) return EntityToBytes ( ( obj as GenericEntity )! );
+        if( obj is GenericTile   ) return TileToRawData   ( ( obj as GenericTile   )! );
+        if( obj is GenericItem   ) return ItemToRawData   ( ( obj as GenericItem   )! );
+        if( obj is GenericEntity ) return EntityToRawData ( ( obj as GenericEntity )! );
 
-        return [];
+        return null;
     }
 
-    // <GameObject> <X> <Y> <Z> <SpriteIndex> <itemDamaged>
-    private static byte[] ItemToBytes( GenericItem item ) {
+    // <X> <Y> | <GameObject> <Z> <SpriteIndex> <itemDamaged>
+    private static RawData ItemToRawData( GenericItem item ) {
         RawItemData raw = new(
             item.getGameObjectID(),
-            (int)item.getX(),
-            (int)item.getY(),
             (int)item.getZ(),
             item.getSpriteIndex(),
             item.getItemDamage()
-
         );
 
         byte[] bytes = [
             Main.GameObjectToByte( raw.gameObject ),
-            (byte)raw.x,
-            (byte)raw.y,
             (byte)raw.z,
             (byte)raw.spriteIndex,
             (byte)raw.itemDamaged
-        ]; 
+        ];
 
-        return bytes;
+        RawData data = new(
+            (ushort)item.getX(),
+            (ushort)item.getY(),
+            bytes
+        );
+        
+
+        return data;
     }
 
-    // <GameObject> <X> <Y> <Y> <SpriteIndex> <Life>
-    private static byte[] EntityToBytes( GenericEntity entity ) {
+    // <X> <Y> | <GameObject> <Z> <SpriteIndex> <Life>
+    private static RawData EntityToRawData( GenericEntity entity ) {
         
         RawEntityData raw = new(
             entity.getGameObjectID(),
-            (int)entity.getX(),
-            (int)entity.getY(),
             (int)entity.getZ(),
             entity.getSpriteIndex(),
-
             entity.getLife()
 
         );
 
         byte[] bytes = [
             Main.GameObjectToByte( raw.gameObject ),
-            (byte)raw.x,
-            (byte)raw.y,
             (byte)raw.z,
             (byte)raw.spriteIndex,
             (byte)raw.life
-        ]; 
+        ];
 
-        return bytes;
+        RawData data = new(
+            (ushort)entity.getX(),
+            (ushort)entity.getY(),
+            bytes
+        ); 
+
+        return data;
     }
 
-    // <GameObject> <X> <Y> <Z> <SpriteIndex> <RotationX> <MultiplyerW>
-    private static byte[] TileToBytes( GenericTile tile ) {
+    // <X> <Y> | <GameObject> <Z> <SpriteIndex> <RotationX> <MultiplyerW>
+    private static RawData TileToRawData( GenericTile tile ) {
          
         RawTileData raw = new(
             tile.getGameObjectID(),
-            (int)tile.getX(),
-            (int)tile.getY(),
             (int)tile.getZ(),
             tile.getSpriteIndex(),
             tile.sprite.rotationX / 90,
@@ -95,35 +97,38 @@ public class GameDataConverter {
 
         byte[] bytes = [
             Main.GameObjectToByte( raw.gameObject ),
-            (byte)raw.x,
-            (byte)raw.y,
             (byte)raw.z,
             (byte)raw.spriteIndex,
             (byte)raw.rotationX,
             (byte)raw.multiplyerW
         ];
 
-        return bytes;
+        RawData data = new(
+            (ushort)tile.getX(),
+            (ushort)tile.getY(),
+            bytes
+        );
+
+        return data;
     
     }
 
-    public static WorldObject? BytesToWorldObject( byte[] bytes, Main game ) {
-        
-        GameObject gameObject = Main.ByteToGameObject( bytes[0] );
+    public static WorldObject? rawDataToWorldObject( RawData data, Main game ) {
 
+        int x = data.x;
+        int y = data.y;
+
+        GameObject gameObject = Main.ByteToGameObject( data.bytes[0] );
         PaletteItem? item = AllGameObjectsPalette.FindByGameObject( gameObject );
 
         if( item == null ) return null; 
-        
-        int x = bytes[ 1 ];
-        int y = bytes[ 2 ];
-        int z = bytes[ 3 ];
+
+        int z = data.bytes[ 1 ];
 
         if ( typeof( GenericTile ).IsAssignableTo( item.classObject ) ) {
-
-            int spriteIndex = bytes[ 4 ];
-            int rotationX   = bytes[ 5 ];
-            int multiplyerW = bytes[ 6 ];
+            int spriteIndex = data.bytes[ 2 ];
+            int rotationX   = data.bytes[ 3 ];
+            int multiplyerW = data.bytes[ 4 ];
         
             GenericTile? tile = TileCreator.NewTile( gameObject, game );
                 
@@ -141,13 +146,12 @@ public class GameDataConverter {
             tile.setSpriteIndex( spriteIndex );
 
             return tile;
-
         }
 
         if( typeof( GenericItem ).IsAssignableTo( item.classObject )) {
             
-            int spriteIndex = bytes[ 4 ];
-            byte itemDamaged = bytes[ 5 ];
+            int spriteIndex  = data.bytes[ 2 ];
+            byte itemDamaged = data.bytes[ 3 ];
             
             GenericItem i = (GenericItem)Activator.CreateInstance( item.classObject, game )!;
             i.setSpriteIndex( spriteIndex );
@@ -159,8 +163,8 @@ public class GameDataConverter {
 
         if( typeof( GenericEntity ).IsAssignableTo( item.classObject )) {
             
-            int spriteIndex = bytes[ 4 ];
-            int life = bytes[ 5 ];
+            int spriteIndex = data.bytes[ 2 ];
+            int life        = data.bytes[ 3 ];
             
             GenericEntity e = (GenericEntity)Activator.CreateInstance( item.classObject, game )!;
             e.setSpriteIndex( spriteIndex );
@@ -282,7 +286,8 @@ public class MapCreator {
         if( Raylib.IsMouseButtonPressed( MouseButton.Right ) ) rightClick( Raylib.GetMousePosition() );
 
         if( Raylib.IsKeyPressed( KeyboardKey.F5 ) )  saveMap();
-        if( Raylib.IsKeyPressed( KeyboardKey.F12 ) ) loadMap();
+        if( Raylib.IsKeyPressed( KeyboardKey.F9 ) )  readMap();
+        if( Raylib.IsKeyPressed( KeyboardKey.F10 ) ) loadMap();
         
 
         if( Raylib.IsKeyPressed( KeyboardKey.R ) ) rotate( Raylib.GetMousePosition() );
@@ -380,61 +385,98 @@ public class MapCreator {
 
     }
 
+    public void showMessage( string msg ) {
+        Console.WriteLine( msg );
+    }
+
+
     public void saveMap() {
 
-        List<byte[]> byteMap = [];
+        List<RawData> byteMap = [];
 
         foreach( var obj in map ) {
 
             var t = GameDataConverter.ToBytes( obj );
 
-            byteMap.Add( t );
+            if( t != null ) byteMap.Add( t.Value );
             
         }
 
         try {
             var stream = File.Create( mapfile );
+            var writer = new BinaryWriter( stream );
 
-            foreach ( var b in byteMap ) {
-                stream.WriteByte( (byte)b.Length );
-                stream.Write( b );
+            foreach ( var raw in byteMap ) {
+
+                writer.Write( raw.x );
+                writer.Write( raw.y );
+
+                writer.Write( (byte)raw.bytes.Length );
+                writer.Write( raw.bytes );
             }
 
             stream.Close();
             
+            showMessage("Map saved");
+
         } catch( Exception e ) {
-            Console.WriteLine( e.ToString() );
+            Console.WriteLine( e );
         }
 
   
     }
 
-    public void loadMap() {
-        
-        var stream = File.OpenRead( mapfile );
+    public void readMap() {
 
-        while(stream.Position < stream.Length)
-        {
-            int size = stream.ReadByte();
+        try {
+            var stream = File.OpenRead( mapfile );
+            var reader = new BinaryReader( stream );
 
-            byte[] tile = new byte[size];
+            int count = 0;
 
-            stream.ReadExactly(tile);
+            while( reader.BaseStream.Position < reader.BaseStream.Length ) {
+                
+                ushort x = reader.ReadUInt16();
+                ushort y = reader.ReadUInt16();
 
-            WorldObject? obj = GameDataConverter.BytesToWorldObject( tile, game );
+                byte lenght = reader.ReadByte();
 
-            if( obj != null  ) {
-                // Console.WriteLine( "Loaded: " + obj.getGameObjectID() );
+                byte[] bytes = reader.ReadBytes( lenght );
+
+                RawData raw = new( x, y, bytes );
+
+                WorldObject? obj = GameDataConverter.rawDataToWorldObject( raw, game );
+
+                if( obj == null) {
+
+                    showMessage( "--Fail To Read The Map--" );
+
+                    return;
+
+                }
+
+                count++;
+
                 addToMap( obj );
 
-            } else {
-                Console.WriteLine( "--Fail--" );
+                
             }
 
+            stream.Close();
+
+            showMessage( count + " Items loaded" );
+
+        } catch ( Exception ex ) {
+            Console.WriteLine( ex );
         }
 
     }
 
+    public void loadMap() {
+        game.setMap( map );
+
+        showMessage( "map Loaded N Ready To Play!!!" );
+    }
 
     private void leftClick( Vector2 vec ) {
 
