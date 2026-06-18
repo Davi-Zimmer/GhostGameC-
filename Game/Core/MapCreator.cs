@@ -1,6 +1,8 @@
 using System.Numerics;
+using System.Runtime.CompilerServices;
 using Game.Data;
 using Game.Objects;
+using Game.Objects.Basics;
 using Game.Rendering;
 using Game.World.Events;
 using Game.World.Persistence;
@@ -39,7 +41,11 @@ public class MapCreator {
     public Main game;
     public string mapfile = "map.world";
     public bool open = false;
+    public bool eventInterface = false;
+
     public bool itemsInterface = false;
+
+    public EventName selectedEvent = EventName.None;
 
     private List<WorldObject> map = [];
 
@@ -55,6 +61,7 @@ public class MapCreator {
 
         organizedItems = organizeItems();
 
+
     }
 
     private List<OrganizedPeletteItem> organizeItems() {
@@ -67,7 +74,7 @@ public class MapCreator {
         for ( int index = 0; index < AllGameObjectsPalette.Items.Count; index++ ) {
             
             PaletteItem item = AllGameObjectsPalette.Items[ index ];
-            
+
             for( int x = 0; x < item.previewSprites.Count; x++ ) {
 
                 int posX = x     * size + space * x;
@@ -88,16 +95,17 @@ public class MapCreator {
         return list;
     }
 
-    public void events( float delta, ref Camera2D cam ) {
+    public void userEvents( float delta, ref Camera2D cam ) {
 
         float speed = 200 * delta;
 
-        if( Raylib.IsKeyDown( KeyboardKey.W ) ) cam.Offset.Y += speed; else 
-        if( Raylib.IsKeyDown( KeyboardKey.S ) ) cam.Offset.Y -= speed;
-        if( Raylib.IsKeyDown( KeyboardKey.A ) ) cam.Offset.X += speed; else
-        if( Raylib.IsKeyDown( KeyboardKey.D ) ) cam.Offset.X -= speed;
+        if( Raylib.IsKeyDown( KeyboardKey.W ) ) cam.Target.Y -= speed; else 
+        if( Raylib.IsKeyDown( KeyboardKey.S ) ) cam.Target.Y += speed;
+        if( Raylib.IsKeyDown( KeyboardKey.A ) ) cam.Target.X -= speed; else
+        if( Raylib.IsKeyDown( KeyboardKey.D ) ) cam.Target.X += speed;
 
 
+        if( Raylib.IsKeyPressed( KeyboardKey.E ) )   toggleEventsInterface(); 
         if( Raylib.IsKeyPressed( KeyboardKey.Tab ) ) toggleItemsInterface(); 
         if( Raylib.IsKeyPressed( KeyboardKey.F1  ) ) toggleMapCreation();
 
@@ -117,7 +125,6 @@ public class MapCreator {
         if( Raylib.IsKeyPressed( KeyboardKey.R ) ) rotate( Raylib.GetMousePosition() );
 
     }
-
 
     private void overrideMap( List<WorldObject> newMap ) {
         newMap.ForEach( t => addToMap( t ) );
@@ -185,6 +192,33 @@ public class MapCreator {
 
     }
 
+    private EventName getClickedEventName( Vector2 vec ) {
+
+        int offset = 20;
+        int y   = 0;
+        int gap = 5;
+        int x   = (int)game.getInnerWidth() - 190; 
+        int width  = 150;
+        int height = 30;
+
+        foreach( var item in Map.AllEvents ) {
+            int yy = y * gap + y * height + offset;
+
+            if ( inside( vec, new Rectangle( x, yy, width, height ) ) ) {
+                
+                return item.Key;
+
+            }
+
+            y++;
+        }
+
+        return EventName.None;
+
+    }
+
+    private WorldObject? ob = null ;
+
     private List<WorldObject> getClickedMapItemList( Vector2 vec, bool ignoreZ ) {
 
         List<WorldObject> list = new();
@@ -200,6 +234,7 @@ public class MapCreator {
                     if( z == item.getZ() ) {
                         
                         list.Add( item );
+                        ob = item;
                         
                         continue;
 
@@ -212,9 +247,12 @@ public class MapCreator {
                 
                 list.Add( item );
 
+                ob = item;
+
             }
         
         }
+
 
         return list;
 
@@ -223,9 +261,16 @@ public class MapCreator {
     public void showMessage( string msg ) {
         Console.WriteLine( msg );
     }
-
     
     private void leftClick( Vector2 vec ) {
+
+        if ( eventInterface && vec.X > game.getInnerWidth() - 200 ) {
+
+            selectedEvent = getClickedEventName( vec );
+
+            return;
+        }
+
 
         if ( itemsInterface ) {
 
@@ -266,6 +311,20 @@ public class MapCreator {
                 .setZ( z ).setXY( x, y );
 
                 addToMap( tile );
+                return;
+
+            }
+
+            if( typeof( EventEntity ).IsAssignableTo( selectedItem.classObject ) ){
+                
+                EventEntity? evEntity = (EventEntity)Activator.CreateInstance( selectedItem!.classObject, game )!;
+
+                evEntity.setEventName( selectedEvent );
+
+                evEntity.setZ( z ).setXY( x, y );
+
+                addToMap( evEntity );  
+
                 return;
 
             }
@@ -360,9 +419,57 @@ public class MapCreator {
 
     }
 
+    public void drawEventInterface( ref Camera2D cam, float delta ) {
+        
+        int size = 200;
+
+        Raylib.DrawRectangle( 
+            (int)game.getInnerWidth() - size,
+            0,
+            size,
+            (int)game.getInnerHeight(),
+            Color.DarkBlue
+        );
+        
+        int offset = 20;
+        int y   = 0;
+        int gap = 5;
+        int x   = (int)game.getInnerWidth() - 190; 
+        int width  = 150;
+        int height = 30;
+
+        foreach( var item in Map.AllEvents ) {
+            
+            int yy = y * gap + y * height + offset;
+
+            Raylib.DrawRectangle(
+                x,
+                yy,
+                width,
+                height,
+                Color.Black
+            );
+
+            Raylib.DrawText( 
+                item.Key.ToString(),
+                x,
+                yy,
+                20,
+                Color.White
+            );
+            
+            y++;
+        }
+
+            
+        Raylib.DrawText( selectedEvent.ToString(), x + 50, 5, 15, Color.Red );
+
+
+    }
+
     public void update( ref Camera2D cam, float delta, Texture2D spriteSheet ) {
 
-        events( delta, ref cam );
+        userEvents( delta, ref cam );
 
         if( itemsInterface ) {
 
@@ -411,9 +518,52 @@ public class MapCreator {
 
         }
 
+        if( eventInterface ) {
+            
+            drawEventInterface( ref cam, delta );
+
+        }
+
+
+    /*
+
+        Vector2 mouseScreen = Raylib.GetMousePosition();
+
+        // converte para mundo considerando a camera
+        Vector2 mouseWorld = Raylib.GetScreenToWorld2D(mouseScreen, cam);
+
+        float vx = MathF.Floor(mouseWorld.X / game.TileSize) * game.TileSize;
+        float vy = MathF.Floor(mouseWorld.Y / game.TileSize) * game.TileSize;
+
+
+        Raylib.DrawText( $"X: { vx }, Y: { vy } ", 0, 0, 20, Color.Pink );
+
+        Raylib.DrawRectangle(
+            (int)vx,
+            (int)vy,
+            game.TileSize,
+            game.TileSize,
+            new Color( 255, 255, 255, .3f )
+        );
+
+        int tileSize = game.TileSize;
+        Vector2 mouseScreen1 = Raylib.GetMousePosition();
+        Vector2 mouseWorld2 = Raylib.GetScreenToWorld2D(mouseScreen, cam);
+
+        int tileX = (int)MathF.Floor(mouseWorld2.X / tileSize);
+        int tileY = (int)MathF.Floor(mouseWorld2.Y / tileSize);
+
+        Raylib.DrawRectangle(
+            tileX * tileSize,
+            tileY * tileSize,
+            tileSize,
+            tileSize,
+            Color.Red
+        );*/
 
     }
 
+    private void toggleEventsInterface(){ eventInterface = !eventInterface; } 
     private void toggleItemsInterface(){ itemsInterface = !itemsInterface; } 
     public void toggleMapCreation() { open = !open; }
 

@@ -1,15 +1,18 @@
+using System.Data;
 using Game.Core;
 using Game.Data;
 using Game.Objects;
 using Game.World.Entity;
+using Game.World.Events;
 using Game.World.Item;
 using Game.World.Tile;
 
 namespace Game.World.Persistence;
 
-using RawEntityData = ( GameObject gameObject, int z, int spriteIndex, int life );
-using RawTileData   = ( GameObject gameObject, int z, int spriteIndex, int rotationX, int multiplyerW );
-using RawItemData   = ( GameObject gameObject, int z, int spriteIndex, int itemDamaged );
+using RawEventEntityData = ( GameObject gameObject, int z, int eventName );
+using RawEntityData      = ( GameObject gameObject, int z, int spriteIndex, int life );
+using RawTileData        = ( GameObject gameObject, int z, int spriteIndex, int rotationX, int multiplyerW );
+using RawItemData        = ( GameObject gameObject, int z, int spriteIndex, int itemDamaged );
 
 using RawData = ( ushort x, ushort y, byte[] bytes );
 
@@ -17,9 +20,13 @@ public class GameDataConverter {
 
     public static RawData? ToBytes( WorldObject obj ) {
 
-        if( obj is GenericTile   ) return TileToRawData   ( ( obj as GenericTile   )! );
-        if( obj is GenericItem   ) return ItemToRawData   ( ( obj as GenericItem   )! );
-        if( obj is GenericEntity ) return EntityToRawData ( ( obj as GenericEntity )! );
+
+        
+
+        if( obj is GenericTile     ) return TileToRawData        ( ( obj as GenericTile   )! );
+        if( obj is GenericItem     ) return ItemToRawData        ( ( obj as GenericItem   )! );
+        if( obj is EventEntity     ) return EventEntityToRawData ( ( obj as EventEntity   )! );
+        if( obj is GenericEntity   ) return EntityToRawData      ( ( obj as GenericEntity )! );
 
         return null;
     }
@@ -106,15 +113,41 @@ public class GameDataConverter {
     
     }
 
+   // <X> <Y> | <GameObject> <Z> <EventName>
+    private static RawData EventEntityToRawData( EventEntity entity ) {
+        
+        RawEventEntityData raw = new(
+            entity.getGameObjectID(),
+            (int)entity.getZ(),
+            (int)entity.getEventName() 
+        );
+
+        byte[] bytes = [
+            Main.GameObjectToByte( raw.gameObject ),
+            (byte)raw.z,
+            (byte)raw.eventName
+        ];
+
+        RawData data = new(
+            (ushort)entity.getX(),
+            (ushort)entity.getY(),
+            bytes
+        );
+
+        return data;
+    
+    }
+
     public static WorldObject? rawDataToWorldObject( RawData data, Main game ) {
 
         int x = data.x;
         int y = data.y;
 
         GameObject gameObject = Main.ByteToGameObject( data.bytes[0] );
-        PaletteItem? item = AllGameObjectsPalette.FindByGameObject( gameObject );
 
-        if( item == null ) return null; 
+        PaletteItem? item = AllGameObjectsPalette.FindByGameObject( gameObject );
+        
+        if( item == null ) return null;
 
         int z = data.bytes[ 1 ];
 
@@ -131,8 +164,6 @@ public class GameDataConverter {
 
             tile.sprite.rotationX   = rotationX * 90;
             tile.sprite.multiplyerW = multiplyerW;
-
-            Console.WriteLine( rotationX );
 
             tile.setZ( z ).setXY( x, y );
 
@@ -154,6 +185,21 @@ public class GameDataConverter {
             
         }
 
+        if( typeof( EventEntity ).IsAssignableTo( item.classObject )) {
+            
+            int eventName = data.bytes[ 2 ];
+            
+            EventEntity e = (EventEntity)Activator.CreateInstance( item.classObject, game )!;
+            // e.setGameObjectID( gameObject );
+            
+            e.setEventName( (EventName)eventName );
+            
+            e.setZ( z ).setXY( x, y );
+
+            return e;
+            
+        }
+
         if( typeof( GenericEntity ).IsAssignableTo( item.classObject )) {
             
             int spriteIndex = data.bytes[ 2 ];
@@ -168,6 +214,9 @@ public class GameDataConverter {
             
         }
 
+
+        Console.WriteLine( gameObject + "RANDOM OBJECTAAAAAAAAAAA");
+
         WorldObject obj = (WorldObject)Activator.CreateInstance( item.classObject, game )!;
 
         obj.setZ( z ).setXY( x, y );
@@ -177,7 +226,6 @@ public class GameDataConverter {
     }  
 
 }
-
 
 public class MapSerializer {
     private static void ShowMessage( string msg ) {
@@ -211,7 +259,7 @@ public class MapSerializer {
 
             stream.Close();
             
-            // showMessage("Map saved");
+            ShowMessage("Map saved");
 
         } catch( Exception e ) {
             Console.WriteLine( e );
@@ -243,9 +291,11 @@ public class MapSerializer {
 
                 WorldObject? obj = GameDataConverter.rawDataToWorldObject( raw, game );
 
-                if( obj == null) {
+                if( obj == null ) {
 
                     ShowMessage( "--Fail To Read The Map--" );
+                    
+                    stream.Close();
 
                     return [];
 

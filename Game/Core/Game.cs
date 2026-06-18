@@ -18,6 +18,8 @@ public class Main {
 
     private List< WorldObject > map = [];
 
+    private bool loadingMap = false;
+
     private Player player;
 
     private Rect? cameraTarget = null;
@@ -313,6 +315,8 @@ public class Main {
 
         executeStack();
 
+        if( loadingMap ) return;
+
         if( player.getInvetory().open ) {
             
             player.getInvetory().tick( delta );
@@ -393,7 +397,8 @@ public class Main {
         [   7  ]  = GameObject.Player,
         [   8  ]  = GameObject.GenericItem,
         [   9  ]  = GameObject.Slime,
-        [  10  ]  = GameObject.Poison
+        [  10  ]  = GameObject.Poison,
+        [  11  ]  = GameObject.EventObject 
 
     };
 
@@ -441,6 +446,31 @@ public class Main {
 
     }
 
+    public void changeMap( List<WorldObject> newMap ) {
+        
+        loadingMap = true;
+
+        tickExecutionStack.Add( () => {
+
+            Player p = player;
+
+            map.Clear();
+            
+            foreach( WorldObject item in newMap ) {
+                
+                addToMap( item );
+
+            }
+
+            addToMap( p );
+
+            loadingMap = false;
+
+        });
+
+
+    }
+
 }
 
 public enum GameObject {
@@ -449,6 +479,7 @@ public enum GameObject {
     Player, Slime,
     Poison, EctoGun,
     Grass,
+    EventObject,
     // TopLeftDirtGrass, TopDirtGrass,
     // TopLeftDirt, TopDirt, MiddleDirt, TopLeftDeepDirt, 
     // TopDeepDirt, MiddleGrassShadow, TopLefGrassShadow, TopGrassShadow, LeftGrassShadow, 
