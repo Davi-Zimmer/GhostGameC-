@@ -46,8 +46,8 @@ public class Map {
     public delegate void EventFunc( Main game );
 
     public static Dictionary< EventName, EventFunc > AllEvents = new() {
-        [ EventName.None  ] = ( Main game ) => { Console.WriteLine("DISPAROU"); },
-        [ EventName.Spawn ] = ( Main game ) => Change( Level.Spawn , 0, 100 , game ),
+        [ EventName.None  ] = ( Main game ) => {},
+        [ EventName.Spawn ] = ( Main game ) => Change( Level.Spawn , 4 * game.TileSize, -1 * game.TileSize , game ),
         [ EventName.Test  ] = ( Main game ) => Change( Level.Test  , 0, 100 , game ),
     };
 
@@ -79,8 +79,5 @@ public class Map {
     Noroeste    Norte     Nordeste 
     Oeste       Center    Leste
     Sudoeste    Sul       Sudeste
-
-
-    preciso carregar o mapa e botar o player no local correto
 
 */

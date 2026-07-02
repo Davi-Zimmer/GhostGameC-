@@ -7,7 +7,7 @@ namespace Game.World.Events;
 public class EventEntity: GenericEntity {
 
     public EventName locationName = EventName.None ;
-    
+        
     public EventEntity( Main game ): base( game ) {
         
         Configure<EventEntity>( e => {
@@ -27,7 +27,7 @@ public class EventEntity: GenericEntity {
 
         }
 
-        return false; 
+        return false;
 
     }
 

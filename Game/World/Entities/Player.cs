@@ -1,3 +1,4 @@
+using System.Dynamic;
 using System.Numerics;
 using Game.Core;
 using Game.Interface;
@@ -17,7 +18,8 @@ public class Player : GenericEntity {
     public Player( Main game ): base( game ) {
                 
         Configure<Player>( p => {
-            p.setLife( 100 )
+            p.setMaxLife( 100 ).setLife( 100 )
+            
             .setGameObjectID( GameObject.Player );
             
             p.setSpeed( 200 )
@@ -96,6 +98,8 @@ public class Player : GenericEntity {
 
     }
 
+    
+
     public int test = 0;
     public override void render( Camera2D cam, float delta, Texture2D spriteSheet ) {
 
@@ -115,6 +119,5 @@ public class Player : GenericEntity {
     public Inventory getInvetory() { return inventory; }
 
     //--------------------------------- Setters ---------------------------------\\ 
-
 
 }

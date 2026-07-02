@@ -262,6 +262,58 @@ public class MapCreator {
         Console.WriteLine( msg );
     }
     
+
+    public void placeItem( float x, float y ) {
+
+        var obj = getClickedMapItem( new Vector2( x + 10 , y + 10  ), false );
+
+        if( obj != null ) {
+
+            Console.WriteLine("Ja tem coisa ae " + obj.getGameObjectID() );
+            
+            return;
+        }
+
+        if ( typeof( GenericTile ).IsAssignableTo( selectedItem!.classObject ) ) {
+                
+            GameObject gameObject = selectedItem!.gameObject;
+
+            GenericTile? tile = TileCreator.NewTile( gameObject, game );
+                
+            if( tile == null ) return;
+
+            tile.sprite.setSprite( selectedItem.sprite );
+
+            tile.setSpriteIndex( selectedItem.spriteIndex )
+            .setZ( z ).setXY( x, y );
+
+            addToMap( tile );
+            return;
+
+        }
+
+        if( typeof( EventEntity ).IsAssignableTo( selectedItem.classObject ) ){
+            
+            EventEntity? evEntity = (EventEntity)Activator.CreateInstance( selectedItem!.classObject, game )!;
+
+            evEntity.setEventName( selectedEvent );
+
+            evEntity.setZ( z ).setXY( x, y );
+
+            addToMap( evEntity );  
+
+            return;
+
+        }
+
+        WorldObject item = (WorldObject)Activator.CreateInstance( selectedItem!.classObject, game )!;
+
+        item.setSpriteIndex( selectedItem.spriteIndex )
+        .setZ( z ).setXY( x, y );
+
+        addToMap( item );  
+    }
+
     private void leftClick( Vector2 vec ) {
 
         if ( eventInterface && vec.X > game.getInnerWidth() - 200 ) {
@@ -271,7 +323,6 @@ public class MapCreator {
             return;
         }
 
-
         if ( itemsInterface ) {
 
             selectedItem = getClickedPalleteItem( vec );
@@ -280,16 +331,6 @@ public class MapCreator {
 
             if( selectedItem == null )  return;
 
-            WorldObject? obj = getClickedMapItem( getWorldClick( vec ), false );
-
-            if ( obj != null ) {
-                
-                Console.WriteLine("Ja tem coisa ae " + obj.getGameObjectID() );
-                
-                return;
-            
-            }
-
             Vector2 mouseWorld = getWorldClick( vec );
 
             float size = game.TileSize;
@@ -297,44 +338,7 @@ public class MapCreator {
             float x = MathF.Floor( mouseWorld.X / size ) * size;
             float y = MathF.Floor( mouseWorld.Y / size ) * size;
 
-            if ( typeof( GenericTile ).IsAssignableTo( selectedItem.classObject ) ) {
-                
-                GameObject gameObject = selectedItem!.gameObject;
-
-                GenericTile? tile = TileCreator.NewTile( gameObject, game );
-                    
-                if( tile == null ) return;
-
-                tile.sprite.setSprite( selectedItem.sprite );
-
-                tile.setSpriteIndex( selectedItem.spriteIndex )
-                .setZ( z ).setXY( x, y );
-
-                addToMap( tile );
-                return;
-
-            }
-
-            if( typeof( EventEntity ).IsAssignableTo( selectedItem.classObject ) ){
-                
-                EventEntity? evEntity = (EventEntity)Activator.CreateInstance( selectedItem!.classObject, game )!;
-
-                evEntity.setEventName( selectedEvent );
-
-                evEntity.setZ( z ).setXY( x, y );
-
-                addToMap( evEntity );  
-
-                return;
-
-            }
-
-            WorldObject item = (WorldObject)Activator.CreateInstance( selectedItem!.classObject, game )!;
-
-            item.setSpriteIndex( selectedItem.spriteIndex )
-            .setZ( z ).setXY( x, y );
-
-            addToMap( item );  
+           placeItem( x, y );
 
         }
 
@@ -492,6 +496,21 @@ public class MapCreator {
 
         }
 
+        int tileSize = game.TileSize;
+        Vector2 mouseScreen1 = Raylib.GetMousePosition();
+        Vector2 mouseWorld2  = Raylib.GetScreenToWorld2D( mouseScreen1, cam );
+
+        int tileX = (int)MathF.Floor( mouseWorld2.X / tileSize );
+        int tileY = (int)MathF.Floor( mouseWorld2.Y / tileSize );
+
+        Raylib.DrawRectangle(
+            tileX * tileSize,
+            tileY * tileSize,
+            tileSize,
+            tileSize,
+            Raylib.ColorAlpha( Color.White, .2f )
+        );
+
         Raylib.EndMode2D();
 
         Raylib.DrawText( "z: " + z,  10, 10, 20, Color.White );
@@ -523,43 +542,10 @@ public class MapCreator {
             drawEventInterface( ref cam, delta );
 
         }
+        
+        Raylib.DrawText( $"X: {tileX} Y: {tileY}", 10, 50, 20, Color.Pink );
 
-
-    /*
-
-        Vector2 mouseScreen = Raylib.GetMousePosition();
-
-        // converte para mundo considerando a camera
-        Vector2 mouseWorld = Raylib.GetScreenToWorld2D(mouseScreen, cam);
-
-        float vx = MathF.Floor(mouseWorld.X / game.TileSize) * game.TileSize;
-        float vy = MathF.Floor(mouseWorld.Y / game.TileSize) * game.TileSize;
-
-
-        Raylib.DrawText( $"X: { vx }, Y: { vy } ", 0, 0, 20, Color.Pink );
-
-        Raylib.DrawRectangle(
-            (int)vx,
-            (int)vy,
-            game.TileSize,
-            game.TileSize,
-            new Color( 255, 255, 255, .3f )
-        );
-
-        int tileSize = game.TileSize;
-        Vector2 mouseScreen1 = Raylib.GetMousePosition();
-        Vector2 mouseWorld2 = Raylib.GetScreenToWorld2D(mouseScreen, cam);
-
-        int tileX = (int)MathF.Floor(mouseWorld2.X / tileSize);
-        int tileY = (int)MathF.Floor(mouseWorld2.Y / tileSize);
-
-        Raylib.DrawRectangle(
-            tileX * tileSize,
-            tileY * tileSize,
-            tileSize,
-            tileSize,
-            Color.Red
-        );*/
+        HandleFillTool( tileX, tileY );
 
     }
 
@@ -567,4 +553,55 @@ public class MapCreator {
     private void toggleItemsInterface(){ itemsInterface = !itemsInterface; } 
     public void toggleMapCreation() { open = !open; }
 
+    private bool fillMode = false;
+    private int startX;
+    private int startY;
+    private bool eraseMode = false;
+
+    void HandleFillTool( int tileX, int tileY ) {
+        bool ctrl = Raylib.IsKeyDown( KeyboardKey.LeftControl );
+
+        if (!ctrl) return;
+
+        bool leftClick  = Raylib.IsMouseButtonPressed(MouseButton.Left);
+        bool rightClick = Raylib.IsMouseButtonPressed(MouseButton.Right);
+
+        if (!leftClick && !rightClick) return;
+
+        if (!fillMode) {
+
+            fillMode = true;
+            startX = tileX;
+            startY = tileY;
+
+            eraseMode = rightClick;
+        } else {
+            fillMode = false;
+
+            int minX = Math.Min(startX, tileX);
+            int maxX = Math.Max(startX, tileX);
+
+            int minY = Math.Min(startY, tileY);
+            int maxY = Math.Max(startY, tileY);
+
+            for (int y = minY; y <= maxY; y++) {
+                
+                for (int x = minX; x <= maxX; x++) {
+                        
+                    if (eraseMode) {
+                        
+                        
+
+                    } else {
+  
+                        placeItem( x * game.TileSize, y * game.TileSize );
+
+                    }
+                }
+            }
+        }
+
+
+        Console.WriteLine( map.Count );
+    }
 }

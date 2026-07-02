@@ -38,6 +38,16 @@ public class Poison: GenericItem {
 
     }
 
+    public override void use() {
+        
+        Player p = game.getPlayer();
+
+        p.applyLife( 25 );
+        
+        p.getInvetory().dropItem( GameObject.Poison );
+        
+    }   
+
     public override bool collisionTrigger<WorldObject>( WorldObject target ) {
 
         if( target.getGameObjectID() == GameObject.Player ) {
