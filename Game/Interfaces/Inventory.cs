@@ -14,6 +14,9 @@ namespace Game.Interface;
 
 using InventoryObject = ( bool hasItem, SpriteFrame sprite, Rectangle rect, GameObject gameObject );
 
+using Projectiles = ( GameObject GameObject, int quantity );
+
+
 public enum HUDSlot {
     Second,
     Third,
@@ -32,6 +35,10 @@ public class Inventory {
 
     private byte[] itemDamaged = new byte[64];
     private ulong items;
+
+    private Dictionary< GameObject, int > projectiles = new() {
+        [ GameObject.Ectoplasma ] = 0
+    };
 
     List<GameObject> gameObjectItemIDs = [
         GameObject.EctoGun,
@@ -350,14 +357,21 @@ public class Inventory {
 
     }
     
+    public int getProjectiles( GameObject gameObject ) {
+        
+        return projectiles[ gameObject ];
+        
+    }
+
+
     //--------------------------------- Setters ---------------------------------\\ 
     public Inventory setSelectedItem( int i ) { selectedItem = i; return this; }
 
-    private void setItem( GameObject gameObject, bool value ) {
+    private Inventory setItem( GameObject gameObject, bool value ) {
 
         int itemId = gameObjectToItemID( gameObject );
 
-        if( itemId == -1 ) return;
+        if( itemId == -1 ) return this;
 
         if( value ) items |= 1UL << itemId; 
         else {
@@ -377,14 +391,34 @@ public class Inventory {
 
         }
 
+        return this;
     }
 
-     public void setItemDamage( GameObject gameObject, byte damage ) {
+    public Inventory setItemDamage( GameObject gameObject, byte damage ) {
         
         int itemId = gameObjectToItemID( gameObject );
         
         itemDamaged[ itemId ] = damage;
 
+        return this;
+
+    }
+
+
+    public Inventory addProjectile( GameObject gameObject, int quantity ) {
+        
+        projectiles[ gameObject ] += quantity;
+
+        return this;
+
+    }
+
+    public Inventory setProjectiles( GameObject gameObject, int quantity ) {
+        
+        projectiles[ gameObject ] = quantity;
+        
+        return this;
+        
     }
 
 }

@@ -1,5 +1,6 @@
 using System.Numerics;
 using Game.Data;
+using Game.Interface;
 using Game.Objects;
 using Game.Objects.Basics;
 using Game.World.Entity;
@@ -124,17 +125,16 @@ public class Main {
                 op.pushX( Math.Sign( -overlap.x ), ep.getMass(), ep.getKnockback(), delta );
             }
             else if( oColl.getCanOverlapOthers() ) {
-                if( !( e is GenericTile )) {
-                    e.applyX( overlap.x );
-                }
-            }
 
+                if( !( e is GenericTile )) e.applyX( overlap.x );
+
+            }
 
         } else {
            
             Collidable oColl = other.getCollidable();
-            Physics op        = other.getPhysics()!;
-            Physics ep        = e.getPhysics()!;
+            Physics op       = other.getPhysics()!;
+            Physics ep       = e.getPhysics()!;
 
             if( op != null && ep != null ) {
                 
@@ -154,10 +154,7 @@ public class Main {
 
             else if( oColl.getCanOverlapOthers()) {
 
-                if( !( e is GenericTile )) {
-                    e.applyY( overlap.y );
-                    
-                }
+                if( !( e is GenericTile ) )  e.applyY( overlap.y );
 
             }
 
@@ -303,8 +300,11 @@ public class Main {
 
             }
             */
-
-            player.getInvetory().renderHUDSlots( spritesheet );
+            Inventory inv = player.getInvetory();
+            
+            inv.renderHUDSlots( spritesheet );
+            
+            Raylib.DrawText($"{ inv.getProjectiles( GameObject.Ectoplasma ) }", (int)getInnerWidth() - 40, 20, 20, Color.White );
 
         }
 
@@ -389,7 +389,9 @@ public class Main {
     }
 
     public Player getPlayer(){ return player; }
+    
     public float getInnerWidth() { return innerWidth; }
+
     public float getInnerHeight() { return innerHeight; }
 
     public Camera2D getCamera() { return cam; }
@@ -406,7 +408,8 @@ public class Main {
         [   8  ]  = GameObject.GenericItem,
         [   9  ]  = GameObject.Slime,
         [  10  ]  = GameObject.Poison,
-        [  11  ]  = GameObject.EventObject 
+        [  11  ]  = GameObject.EventObject,
+        [  12  ]  = GameObject.Ectoplasma
 
     };
 
@@ -488,6 +491,7 @@ public enum GameObject {
     Poison, EctoGun,
     Grass,
     EventObject,
+    Ectoplasma,
     // TopLeftDirtGrass, TopDirtGrass,
     // TopLeftDirt, TopDirt, MiddleDirt, TopLeftDeepDirt, 
     // TopDeepDirt, MiddleGrassShadow, TopLefGrassShadow, TopGrassShadow, LeftGrassShadow, 

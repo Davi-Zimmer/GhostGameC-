@@ -77,6 +77,14 @@ public class Others {
     public SpriteFrame None = new( 184, 34, 32, 32, 1, 0 );    
 }
 
+public class EctoplasmaSprites {
+    public SpriteFrame Icon = new( 184, 34, 32, 32, 1, 0 );
+
+}
+
+
+
+
 public class Sprites {
 
     public static readonly Others Others = new();
@@ -93,6 +101,7 @@ public class Sprites {
     public static readonly PoisonSprites  Poison = new();
     public static readonly EctoGunSprites EctoGun = new();
 
+    public static readonly EctoplasmaSprites Ectoplasma = new();
 
     public static List<SpriteFrame> GetRects( object obj ) {
 
@@ -100,7 +109,7 @@ public class Sprites {
 
         var campos = obj.GetType().GetFields(
             BindingFlags.Instance |
-            BindingFlags.Public |
+            BindingFlags.Public   |
             BindingFlags.NonPublic
         );
 

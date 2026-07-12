@@ -34,7 +34,8 @@ public class AllGameObjectsPalette {
         new PaletteItem ( GameObject.CrackedStoneWall , typeof( GenericTile ) , Sprites.GetRects( Sprites.CrackedStoneWall ) ),
         new PaletteItem ( GameObject.Poison           , typeof( Poison )      , Sprites.GetRects( Sprites.Poison ) ),
         new PaletteItem ( GameObject.EctoGun          , typeof( EctoGun )     , Sprites.GetRects( Sprites.EctoGun ) ),
-        new PaletteItem ( GameObject.EventObject      , typeof( EventEntity ) , Sprites.GetRects( Sprites.Others ) )
+        new PaletteItem ( GameObject.EventObject      , typeof( EventEntity ) , Sprites.GetRects( Sprites.Others ) ),
+        new PaletteItem ( GameObject.Ectoplasma       , typeof( Ectoplasma )  , Sprites.GetRects( Sprites.Ectoplasma ))
     };
 
     public static PaletteItem? FindByGameObject( GameObject gameObject ) {

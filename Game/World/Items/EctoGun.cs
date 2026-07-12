@@ -6,6 +6,8 @@ using Raylib_cs;
 
 namespace Game.World.Item;
 
+using ShotData = ( float dirX, float dirY, float speed, float centerX, float centerY );
+
 public class EctoGun: GenericItem {
 
     public EctoGun( Main game ): base( game ) {
@@ -39,14 +41,39 @@ public class EctoGun: GenericItem {
 
     }
 
-
-    private void shot() {
+    private void newProjectile( ShotData data  ) {
+          
+          GenericProjectile entity = new GenericProjectile( game ).Configure<GenericProjectile>( e => {
+            e.setRenderable( true )
+            .getPhysics()!
+            .setFriction( 1 )
+            .getAcceleration()
+            .setXY( data.dirX, data.dirY );
         
+            e.setSpeed( data.speed );
+            e.setW( 10 ).setH( 10 );
+            e.setXY( data.centerX, data.centerY );
+
+            e.getCollidable()
+            .getExceptions()
+            .Add( GameObject.Player );
+
+        });
+
+        game.tickExecutionStack.Add( () => {
+            game.addToMap( entity );
+        });
+
+    }
+
+    private ShotData calcShot() {
+
         Vector2 mouse = Raylib.GetScreenToWorld2D(
             Raylib.GetMousePosition(),
             game.getCamera()
         );
         
+
         float centerX = game.getPlayer().getMiddleX();
         float centerY = game.getPlayer().getMiddleY();
 
@@ -62,26 +89,38 @@ public class EctoGun: GenericItem {
 
         float speed = 1000;
 
-        GenericProjectile entity = new GenericProjectile( game ).Configure<GenericProjectile>( e => {
-            e.setRenderable( true )
-            .getPhysics()!
-            .setFriction( 1 )
-            .getAcceleration()
-            .setXY( (float)dirX, (float)dirY );
+        ShotData data = ( (float)dirX, (float)dirY, speed, centerX, centerY ); 
+
+
+        return data;
+
+    }
+
+    private bool canShot() {
+
+        return game
+            .getPlayer()
+            .getInvetory()
+            .getProjectiles( GameObject.Ectoplasma ) > 0;
+
+    }
+
+    private void consumeBullet() {
+
+        game
+        .getPlayer()
+        .getInvetory()
+        .addProjectile( GameObject.Ectoplasma, -1 );
+
+    }
+
+    private void shot() {
+
+        if( !canShot() ) return;
         
-            e.setSpeed( speed );
-            e.setW( 10 ).setH( 10 );
-            e.setXY( centerX, centerY );
+        newProjectile( calcShot() );
 
-            e.getCollidable()
-            .getExceptions()
-            .Add( GameObject.Player );
-
-        });
-
-        game.tickExecutionStack.Add( () => {
-            game.addToMap( entity );
-        });
+        consumeBullet();
 
     }
 

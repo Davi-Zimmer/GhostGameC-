@@ -212,8 +212,7 @@ public class GameDataConverter {
             
         }
 
-
-        Console.WriteLine( gameObject + "RANDOM OBJECTAAAAAAAAAAA");
+        // Console.WriteLine( gameObject + "RANDOM OBJECTAAAAAAAAAAA");
 
         WorldObject obj = (WorldObject)Activator.CreateInstance( item.classObject, game )!;
 
@@ -290,9 +289,9 @@ public class MapSerializer {
                 WorldObject? obj = GameDataConverter.rawDataToWorldObject( raw, game );
 
                 if( obj == null ) {
-
-                    ShowMessage( "--Fail To Read The Map--" );
                     
+                    ShowMessage( "--Fail To Read The Map--" );
+                    ShowMessage( "F(): GameDataConverter.rawDataToWorldObject returned null\n Check if item exists in Main.AllGameObjects" );
                     stream.Close();
 
                     return [];
