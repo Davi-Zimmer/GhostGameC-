@@ -2,6 +2,7 @@ using Game.Core;
 using Game.Rendering;
 using Game.World.Entity;
 using Game.World.Entity.Enemy;
+using Game.World.Events;
 using Game.World.Item;
 using Game.World.Tile;
 
@@ -33,7 +34,7 @@ public class AllGameObjectsPalette {
         new PaletteItem ( GameObject.CrackedStoneWall , typeof( GenericTile ) , Sprites.GetRects( Sprites.CrackedStoneWall ) ),
         new PaletteItem ( GameObject.Poison           , typeof( Poison )      , Sprites.GetRects( Sprites.Poison ) ),
         new PaletteItem ( GameObject.EctoGun          , typeof( EctoGun )     , Sprites.GetRects( Sprites.EctoGun ) ),
-        
+        new PaletteItem ( GameObject.EventObject      , typeof( EventEntity ) , Sprites.GetRects( Sprites.Others ) )
     };
 
     public static PaletteItem? FindByGameObject( GameObject gameObject ) {

@@ -228,23 +228,23 @@ public class Inventory {
         }
     }
 
-    public int gameObjetToItemID( GameObject gameObject ) {
+    public int gameObjectToItemID( GameObject gameObject ) {
         return gameObjectItemIDs.IndexOf( gameObject );
     }
 
     public bool hasItem( GameObject gameObject ) {
 
-        int itemId = gameObjetToItemID( gameObject );
+        int itemId = gameObjectToItemID( gameObject );
         
         if( itemId == -1 ) return false;
 
-        return ( items & ( 1UL << itemId )) != 0;
+        return ( items & ( 1UL << itemId ) ) != 0;
 
     }
 
     public void damageItem( GameObject gameObject ) {
         
-        int itemId = gameObjetToItemID( gameObject );
+        int itemId = gameObjectToItemID( gameObject );
 
         byte newDamage = itemDamaged[ itemId ]++;
 
@@ -303,6 +303,8 @@ public class Inventory {
 
             item.setItemDamage( damage.Value );
 
+            setItem( gameObject, false );
+        
         }
 
         return item;
@@ -320,7 +322,7 @@ public class Inventory {
     
     public byte? getItemDamage( GameObject gameObject ) {
         
-        int itemId = gameObjetToItemID( gameObject );
+        int itemId = gameObjectToItemID( gameObject );
 
         if( itemId == -1 ) return null;
 
@@ -350,21 +352,36 @@ public class Inventory {
     
     //--------------------------------- Setters ---------------------------------\\ 
     public Inventory setSelectedItem( int i ) { selectedItem = i; return this; }
-       
+
     private void setItem( GameObject gameObject, bool value ) {
 
-        int itemId = gameObjetToItemID( gameObject );
+        int itemId = gameObjectToItemID( gameObject );
 
         if( itemId == -1 ) return;
 
-        if( value ) items |= 1UL << itemId;
-        else items &= ~( 1UL << itemId );
+        if( value ) items |= 1UL << itemId; 
+        else {
+            items &= ~( 1UL << itemId );
+
+            foreach( var element in hudItems ){
+
+                if( element.Value == null ) continue; 
+
+                if( gameObjectToItemID( element.Value.getGameObjectID() ) == itemId ) {
+                    
+                    hudItems[ element.Key ] = null;
+
+                }
+
+            }
+
+        }
 
     }
 
      public void setItemDamage( GameObject gameObject, byte damage ) {
         
-        int itemId = gameObjetToItemID( gameObject );
+        int itemId = gameObjectToItemID( gameObject );
         
         itemDamaged[ itemId ] = damage;
 

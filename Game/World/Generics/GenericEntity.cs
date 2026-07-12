@@ -9,7 +9,9 @@ public class GenericEntity: WorldObject {
     private Physics physics;
     private Collidable collidable;
 
-    private int life = 1;
+    protected int life = 1;
+    private int maxLife = 1;
+
 
     private float speed = 1;
 
@@ -57,14 +59,16 @@ public class GenericEntity: WorldObject {
     public float getSpeed() { return speed; }
     public override Physics getPhysics() { return physics!; }
     public int getLife() { return life; }
+    public int getMaxLife() { return maxLife; }
 
     //--------------------------------- Setters ---------------------------------\\ 
+    public GenericEntity setMaxLife( int i ) { maxLife = i; return this; }
 
-    public GenericEntity applyLife( int i ) { setLife( getLife() + i ); return this; } 
+    public GenericEntity applyLife( int i ) { life = Math.Min( life + i, maxLife ); return this; }
 
     public GenericEntity setSpeed( float s ) { speed = s; return this; }
+    
     public GenericEntity setLife( int i ) { life = i; return this; }
-
 
     public override float extractX( float delta ) { 
         return getX() + (physics.getAcceleration().getX() + physics.getOrientation().getX()) * delta;

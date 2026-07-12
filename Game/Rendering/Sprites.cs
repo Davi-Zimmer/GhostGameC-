@@ -73,8 +73,13 @@ public class EctoGunSprites {
 }
 
 
+public class Others {
+    public SpriteFrame None = new( 184, 34, 32, 32, 1, 0 );    
+}
 
 public class Sprites {
+
+    public static readonly Others Others = new();
 
     public static readonly PlayerSprites Player = new();
     public static readonly SlimeSprites  Slime  = new();
