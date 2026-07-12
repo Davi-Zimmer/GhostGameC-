@@ -111,7 +111,6 @@ public class Main {
             if( op != null && ep != null ) {
                 
                 if( oColl.getCanOverlapOthers() ) e.applyX( overlap.x ); else {
-                    
                     if( e.getCollidable().getCanPushOthers() ) {
 
                         op.pushX( Math.Sign( -overlap.x ), ep.getMass(), ep.getKnockback(), delta );
@@ -124,20 +123,22 @@ public class Main {
 
                 op.pushX( Math.Sign( -overlap.x ), ep.getMass(), ep.getKnockback(), delta );
             }
-
-            else if( oColl.getCanOverlapOthers() ) e.applyX( overlap.x );
+            else if( oColl.getCanOverlapOthers() ) {
+                if( !( e is GenericTile )) {
+                    e.applyX( overlap.x );
+                }
+            }
 
 
         } else {
            
-             Collidable oColl = other.getCollidable();
+            Collidable oColl = other.getCollidable();
             Physics op        = other.getPhysics()!;
             Physics ep        = e.getPhysics()!;
 
             if( op != null && ep != null ) {
                 
                 if( oColl.getCanOverlapOthers() ) e.applyY( overlap.y ); else {
-                    
                     if( e.getCollidable().getCanPushOthers() ) {
 
                         op.pushY( Math.Sign( -overlap.y ), ep.getMass(), ep.getKnockback(), delta );
@@ -151,7 +152,14 @@ public class Main {
                 op.pushY( Math.Sign( -overlap.y ), ep.getMass(), ep.getKnockback(), delta );
             }
 
-            else if( oColl.getCanOverlapOthers() ) e.applyY( overlap.y );
+            else if( oColl.getCanOverlapOthers()) {
+
+                if( !( e is GenericTile )) {
+                    e.applyY( overlap.y );
+                    
+                }
+
+            }
 
         }
 

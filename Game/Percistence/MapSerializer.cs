@@ -21,8 +21,6 @@ public class GameDataConverter {
     public static RawData? ToBytes( WorldObject obj ) {
 
 
-        
-
         if( obj is GenericTile     ) return TileToRawData        ( ( obj as GenericTile   )! );
         if( obj is GenericItem     ) return ItemToRawData        ( ( obj as GenericItem   )! );
         if( obj is EventEntity     ) return EventEntityToRawData ( ( obj as EventEntity   )! );
